@@ -3,7 +3,7 @@
 namespace App;
 
 /**
- * Application configuration
+	* Application configuration
  *
  * PHP version 7.0
  */
@@ -45,4 +45,28 @@ class Config
      * @var string
      */
     const SECRET_KEY = 'fdHOEvOMVh1pgUo2pMYs2NsRAjNz0kx4';
+	
+	/**
+	 * Mail adress
+ 	 * @var string
+	 */
+	const MAIL_ADDRESS = 'mateusz_nowakowski@outlook.com';
+	
+	/**
+	 * Mmail password
+	 * @var string
+	 */
+	const MAIL_PASSWORD = 'idncfzswkcdxbnxq';
+	
+	/**
+	 * Mail smtp server
+	 * @var string
+	 */
+	const SMTP_SERVER_ADRESS = 'smtp-mail.outlook.com';
+	
+	/**
+	 * Mail smtp port
+	 * @var string
+	 */
+	const SMTP_SERVER_PORT = '587';
 }
