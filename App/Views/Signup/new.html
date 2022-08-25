@@ -3,8 +3,15 @@
 {% block title %}Sign up{% endblock %}
 
 {% block footer %}
+	<script src="/js/hideShowPassword.min.js"></script>
 
 	<script>
+		/**
+		* Add jQuery Validation plugin method dor a valid password
+		*
+		*
+		* Valid password contain at least one letter and one number
+		*/
 		$.validator.addMethod('validPassword',
 			function(value, element, param) {
 				if(value, element, param) {
@@ -34,9 +41,6 @@
 						required: true,
 						minlength: 6,
 						validPassword: true					
-					},
-					password_confirmation: {
-						equalTo: '#inputPassword'
 					}
 				},
 				messages: {
@@ -45,7 +49,16 @@
 					}
 				}
 			});
-		});	
+
+			/**
+			  * Show password toggle button
+			  */
+			$('#inputPassword').hideShowPassword({
+					show: false,
+					innerToggle: 'focus'
+			})
+			  
+		});
 	
 	</script>
 	
@@ -79,10 +92,7 @@
             <label for="inputPassword">Password</label>
             <input type="password" id="inputPassword" name="password" placeholder="Password"  required />
         </div>
-        <div>
-            <label for="inputPasswordConfirmation">Repeat password</label>
-            <input type="password" id="inputPasswordConfirmation" name="password_confirmation" placeholder="Repeat password" required />
-        </div>
+
 
         <button type="submit">Sign up</button>
 
