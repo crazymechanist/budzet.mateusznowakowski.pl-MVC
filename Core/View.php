@@ -41,7 +41,7 @@ class View
 	 */
 	 public static function renderTemplate($template, $args = [])
 	 {
-		echo static::getTemplate($template, $args = []);
+		echo static::getTemplate($template, $args);
 	 }
 	
 	/**
