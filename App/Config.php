@@ -50,23 +50,23 @@ class Config
 	 * Mail adress
  	 * @var string
 	 */
-	const MAIL_ADDRESS = 'mateusz_nowakowski@outlook.com';
+	const MAIL_ADDRESS = 'admin@mateusznowakowski.pl';
 	
 	/**
 	 * Mmail password
 	 * @var string
 	 */
-	const MAIL_PASSWORD = 'idncfzswkcdxbnxq';
+	const MAIL_PASSWORD = 'i4hHbpd1LlyxaW4vF9N4';
 	
 	/**
 	 * Mail smtp server
 	 * @var string
 	 */
-	const SMTP_SERVER_ADRESS = 'smtp-mail.outlook.com';
+	const SMTP_SERVER_ADRESS = 'mail.mateusznowakowski.pl ';
 	
 	/**
 	 * Mail smtp port
 	 * @var string
 	 */
-	const SMTP_SERVER_PORT = '587';
+	const SMTP_SERVER_PORT = '465';
 }

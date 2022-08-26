@@ -1,13 +1,25 @@
-.alert{
-	border:1px solid #ccc;
-	padding: 6px;
+/* General Website Style rules */
+body			{
+	margin-top: 3em;
 }
-.alert-info{
-	background-color: #d9edf7;
+
+.btn-default {
+    color: #333;
+    background-color: #fff;
+    border-color: #ccc;
 }
-.alert-success{
-	background-color: #dff0d8;	
+.btn-default:focus {
+    color: #333;
+    background-color: #e6e6e6;
+    border-color: #8c8c8c;
 }
-.alert-warning{
-	background-color: #fcf8e3;	
+.btn-default:hover {
+    color: #333;
+    background-color: #e6e6e6;
+    border-color: #adadad;
+}
+.btn-default:active {
+    color: #333;
+    background-color: #e6e6e6;
+    border-color: #adadad;
 }
