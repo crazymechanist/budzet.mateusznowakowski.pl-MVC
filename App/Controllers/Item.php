@@ -3,6 +3,7 @@
 	namespace App\Controllers;
 	
 	use Core\View;
+	use App\Flash;
 	use App\Models\MoneyFlow;
 	use App\Controllers\Authenticated;
 	
@@ -50,7 +51,10 @@
 		* @return void
 		*/
 		public function showAction(){
-			View::renderTemplate('Item/show.html');
+			$moneyFlows = MoneyFlow::returnAllMoneyFlowsOfCurrentUser();
+			View::renderTemplate('Item/show.html',[
+				'moneyFlows' => $moneyFlows
+			]);
 		}
 		
 		/**
@@ -59,16 +63,44 @@
 		* @return void
 		*/
 		public function createAction()		{
-			$moneyFlow = new MoneyFlow($_POST);
-
-			if ($moneyFlow->save()) {
-				
-				
+			if( isset($_POST['type'])){
+				$moneyFlow = new MoneyFlow($_POST);
+				$_SESSION['type'] = $moneyFlow->type;
+				$url = '/item/new-' . $_SESSION['type'];
+				$categories = MoneyFlow::returnAllCategoriesNames($_SESSION['type']);
+				if ($moneyFlow->save()) {
+					Flash::addMessage('Create successful');
+					View::renderTemplate('Item/new.html', [
+						'moneyFlow' => $moneyFlow,
+						'type' => $_SESSION['type'],
+						'categories' => $categories
+					]);
+				} else {
+					
+					View::renderTemplate('Item/new.html', [
+						'moneyFlow' => $moneyFlow,
+						'type' => $_SESSION['type'],
+						'categories' => $categories
+					]);
+				}
 			} else {
-				View::renderTemplate('Item/new.html', [
-				'moneyFlow' => $moneyFlow
-				]);
+				if (isset($_SESSION['type'])){
+					$url = '/item/new-' . $_SESSION['type'];
+					$this->redirect($url);
+				} else {
+					$this->redirect('/');
+				}
 				
 			}
 		}
+		
+		/**
+		* Edit a new expense item
+		*
+		* @return void
+		*/
+		public function editAction(){
+			echo $_GET['id'];
+		}
+		
 	}	

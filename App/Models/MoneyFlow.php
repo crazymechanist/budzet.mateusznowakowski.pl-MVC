@@ -1,6 +1,6 @@
 <?php
-
 namespace App\Models;
+
 
 use PDO;
 
@@ -13,18 +13,18 @@ use PDO;
 class MoneyFlow extends \Core\Model{
 	
 	/**
-	* Error messages
-	*
-	* @var array
+		* Error messagesmessages
+		*
+		* @var array
 	*/
 	public $errors = [];
 	
 	/**
-	* Class constructor
-	*
-	* @param array $data  Initial property values
-	*
-	* @return void
+		* Class constructor
+		*
+		* @param array $data  Initial property values
+		*
+		* @return void
 	*/
 	public function __construct($data = [])
 	{
@@ -34,36 +34,38 @@ class MoneyFlow extends \Core\Model{
 	}
 	
 	/**
-	 * Save money flow
-	 *
-	 * @return boolean  True if it was saved, false otherwise
-	 */
+		* Save money flow
+		*
+		* @return boolean  True if it was saved, false otherwise
+	*/
 	public function save()	{
 		$this->validate();
-
-		if($id=$this->saveMoneyFlow()){
-			if($this->assignMoneyFlow($id)){
-				$this->errors[] = 'Failed to save';
-			}
+		$id=0;
+		if(!($id=$this->saveMoneyFlow())){
+			$this->error = 'Failed to save';
+			return false;
 		}
-		
+		if(!($this->assignMoneyFlow($id))){
+			$this->error = 'Failed to save';
+			return false;
+		}
 		return true;
 	}
 	
 	/**
-	 * Save in table money flows
-	 *
-	 * @return boolean  True if the user was saved, false otherwise
-	 */
+		* Save in table money flows
+		*
+		* @return boolean  True if the user was saved, false otherwise
+	*/
 	public function saveMoneyFlow()	{
 		if (empty($this->errors)) {
-
+			
 			$sql = 'INSERT INTO money_flows (name, type, category_id, amount, date, description)
-					VALUES (:name, :type, :category_id, :amount, :date, :description)';
-											  
+			VALUES (:name, :type, :category_id, :amount, :date, :description)';
+			
 			$db = static::getDB();
 			$stmt = $db->prepare($sql);
-												  
+			
 			$stmt->bindValue(':name', $this->name, PDO::PARAM_STR);
 			$stmt->bindValue(':type', $this->type, PDO::PARAM_STR);
 			$category= $this->findIdByCategoryName($this->category);
@@ -71,8 +73,8 @@ class MoneyFlow extends \Core\Model{
 			$stmt->bindValue(':amount', $this->amount);
 			$stmt->bindValue(':date', $this->date, PDO::PARAM_STR);
 			$stmt->bindValue(':description', $this->description, PDO::PARAM_STR);
-
-
+			
+			
 			if ($stmt->execute()){
 				return $db->lastInsertId();
 			} else {
@@ -83,34 +85,34 @@ class MoneyFlow extends \Core\Model{
 	}
 	
 	/**
-	 * Save in table users money flows
-	 *
-	 * @return boolean  True if the user was assigned, false otherwise
-	 */
+		* Save in table users money flows
+		*
+		* @return boolean  True if the user was assigned, false otherwise
+	*/
 	public function assignMoneyFlow($idMoneyFlow)	{
-
+		
 		if (empty($this->errors)) {
-
+			
 			$sql = 'INSERT INTO users_money_flows (id_user , id_money_flows)
-					VALUES (:id_user, :id_money_flows)';
-											  
+			VALUES (:id_user, :id_money_flows)';
+			
 			$db = static::getDB();
 			$stmt = $db->prepare($sql);
-												  
+			
 			$stmt->bindValue(':id_user', $_SESSION['user_id'] , PDO::PARAM_INT);
 			$stmt->bindValue(':id_money_flows', $idMoneyFlow , PDO::PARAM_INT);
-
+			
 			return $stmt->execute();
 		}
-
+		
 		return false;
 	}
 	
 	
 	/**
-	* Validate current property values, adding valiation error messages to the errors array property
-	*
-	* @return void
+		* Validate current property values, adding valiation error messages to the errors array property
+		*
+		* @return void
 	*/
 	public function validate()	{
 		// Name
@@ -135,19 +137,19 @@ class MoneyFlow extends \Core\Model{
 		}
 		
 		//Amount
-		if(!preg_match('/^\d+\.{0,1}\d*$/m', $this->amount)){
+		if(!(preg_match('/^\d+\.{0,1}\d*$/m', $this->amount) || !($this->amount>0))){
 			$this->errors[] = 'Amount invalid';
 		}
 	}
 	
 	/**
-	 * Finding category name by id
-	 *
-	 * @return mixed MoneyFlow if found, false otherwise
-	 */
-	protected function findIdByCategoryName($name)	{
+		* Finding category name by category id
+		*
+		* @return mixed MoneyFlow if found, false otherwise
+	*/
+	public static function findIdByCategoryName($name)	{
 		$sql = 'SELECT * FROM money_flows_categories WHERE name = :name';
-
+		
 		$db = static::getDB();
 		$stmt = $db->prepare($sql);
 		$stmt->bindParam(':name', $name, PDO::PARAM_STR);
@@ -155,24 +157,48 @@ class MoneyFlow extends \Core\Model{
 		$stmt->setFetchMode(PDO::FETCH_CLASS, get_called_class());
 		
 		$stmt->execute();
-
+		
 		return $stmt->fetch();	
 	}
 	
 	/**
-	 * Returning names of mone flows categories
-	 *
-	 * @return  array of string
-	 */
+		* Returning names of mone flows categories
+		*
+		* @return  array of string
+	*/
 	public static function returnAllCategoriesNames($type)	{
-		$sql = 'SELECT name FROM money_flows_categories WHERE type=:type';
+	$sql = 'SELECT name FROM money_flows_categories WHERE type=:type';
+	
+	$db = static::getDB();
+	$stmt = $db->prepare($sql);
+	$stmt->bindParam(':type', $type, PDO::PARAM_STR);
+	
+	$stmt->execute();
+	
+	return $stmt->fetchAll(PDO::FETCH_COLUMN);
+	}
+	
+	/**
+	* Returning names of mone flows categories
+	*
+	* @return  array of string
+	*/
+	public static function returnAllMoneyFlowsOfCurrentUser()	{
+		$sql = 'SELECT		flow.id , flow.name , flow.type , date , description, amount, id_user
+		FROM		money_flows				AS		flow 
+		INNER JOIN	money_flows_categories	AS		cat 
+		ON			flow.category_id		=		cat.id
+		INNER JOIN	users_money_flows		AS		user_mf
+		ON			flow.id					=		user_mf.id_money_flows
+		WHERE		id_user					=		:id_user';
 		
 		$db = static::getDB();
 		$stmt = $db->prepare($sql);
-		$stmt->bindParam(':type', $type, PDO::PARAM_STR);
+		
+		$stmt->bindValue(':id_user', $_SESSION['user_id'] , PDO::PARAM_INT);
 		
 		$stmt->execute();
-
-		return $stmt->fetchAll(PDO::FETCH_COLUMN);
-	}
-}	
+		
+		return $stmt->fetchAll(PDO::FETCH_CLASS);
+		}
+	}							
