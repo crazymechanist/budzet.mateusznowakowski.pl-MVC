@@ -24,36 +24,7 @@
 	}
 </script>
 
-<script>
-	
-	$(document).ready(function(){
-		
-		$("#formItem").validate({
-			rules: {
-				name: "required",
-				date: {
-					required: true,
-					dateISO: true
-				},
-				category: {
-					required: true,
-					remote: '/category/validate-category'
-					},
-				amount: {
-					required: true,
-					number: true,
-					min: 0.01
-				}
-			},
-			messages: {
-					category: {
-						remote: 'This category is not set'	
-					}
-				}
-		});
-	});
-	
-</script>
+<script src="/js/moneyFlowValidate.js"></script>
 
 {% endblock %}
 
@@ -75,7 +46,7 @@
 <form method="post" action="/item/create" id="formItem">
 	
 	<div class="form-group">
-		<label for="inputName">Name{{ a }}</label>
+		<label for="inputName">Name</label>
 		<input id="inputName" name="name" placeholder="Name" autofocus required class="form-control" 
 		{% if moneyFlow.name is not empty %}
 			value= "{{ moneyFlow.name }}"
@@ -94,9 +65,12 @@
 	<div class="form-group">
 		<label for="inputCategory">Category:</label>
 		
-		<select name="category" id="inputCategory" class="form-control" value="{{ moneyFlow.category }}">
+		<select name="category" id="inputCategory" class="form-control">
+			{{ moneyFlow.category ? "<option>{moneyFlow.category}</option>" : ''}}
 			{% for category in categories %}
-			<option>{{ category }}</option>
+				{% if category != moneyFlow.category %}
+				<option>{{ category }}</option>
+				{% endif %}
 			{% endfor %}
 		</select>
 	</div>
