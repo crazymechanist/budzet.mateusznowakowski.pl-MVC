@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Item show{% endblock %}
+
+{% block body %}
+
+<h1>Item show</h1>
+
+{% if moneyFlow is not empty %}
+<ul>
+	<div class="{{ moneyFlow.type }}">
+		<dl class="row">
+			<dt class="col-sm-2 ">Name:</dt>
+			<dd class="col-sm-10">{{ moneyFlow.name }}</dd>
+			<dt class="col-sm-2">Date:</dt>
+			<dd class="col-sm-10">{{ moneyFlow.date }}</dd>
+			<dt class="col-sm-2">Amount [PLN]:</dt>
+			<dd class="col-sm-10">{{ moneyFlow.amount }}</dd>
+			<dt class="col-sm-2">Description:</dt>
+			<dd class="col-sm-10">{{ moneyFlow.description }}</dd>
+		</dl>
+		<div class="row">
+			<form method="post" action="/item/delete" id="formItem" class="col-sm-2 ">
+				<input type="hidden" id="id" name="id" value="{{ moneyFlow.id }}">
+				<button type="submit" class="btn btn-default">Confirm Delete</button>
+			</form>
+			<div class="col-sm-2">
+				<a href="/item/show" class="btn btn-default">Cancel</a>
+			</div>
+		</div>
+	</div>
+</ul>
+{% endif %}
+
+{% endblock %}
