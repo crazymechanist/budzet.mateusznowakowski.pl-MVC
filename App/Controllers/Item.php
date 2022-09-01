@@ -23,7 +23,7 @@ class Item extends Authenticated{
 	 */
 	public function newExpenseAction(){
 		$type = "expense";
-		$categories = MoneyFlow::returnAllCategoriesNames($type);
+		$categories = MoneyFlow::returnAllCategoriesNamesOfCurrUser($type);
 
 		View::renderTemplate('Item/new.html',[
 			'type' => $type,
@@ -38,7 +38,7 @@ class Item extends Authenticated{
 	 */
 	public function newIncomeAction(){
 		$type = "income";
-		$categories = MoneyFlow::returnAllCategoriesNames($type);
+		$categories = MoneyFlow::returnAllCategoriesNamesOfCurrUser($type);
 
 		View::renderTemplate('Item/new.html',[
 			'type' => $type,
@@ -68,7 +68,7 @@ class Item extends Authenticated{
 			$moneyFlow = new MoneyFlow($_POST);
 			$_SESSION['type'] = $moneyFlow->type;
 			$url = '/item/new-' . $_SESSION['type'];
-			$categories = MoneyFlow::returnAllCategoriesNames($_SESSION['type']);
+			$categories = MoneyFlow::returnAllCategoriesNamesOfCurrUser($_SESSION['type']);
 			if ($moneyFlow->save()) {
 				Flash::addMessage('Create successful');
 				View::renderTemplate('Item/new.html', [
@@ -103,7 +103,7 @@ class Item extends Authenticated{
 	public function editAction(){
 		if($moneyFlows= MoneyFlow::returnMoneyFlowsOfCurrentUser($_GET['id'])){
 			$moneyFlow=$moneyFlows[0];
-			$categories = MoneyFlow::returnAllCategoriesNames($moneyFlow->type);
+			$categories = MoneyFlow::returnAllCategoriesNamesOfCurrUser($moneyFlow->type);
 			View::renderTemplate('Item/edit.html',[
 				'moneyFlow' => $moneyFlow,
 				'categories' => $categories
@@ -120,7 +120,7 @@ class Item extends Authenticated{
 	 */
 	public function updateAction(){
 		$moneyFlow = new MoneyFlow;
-		if	($moneyFlow->updateProfile($_POST)){
+		if	($moneyFlow->updateMoneyFlow($_POST)){
 		
 		Flash::addMessage('Changes saved');
 		
@@ -128,9 +128,9 @@ class Item extends Authenticated{
 		} else {
 		View::renderTemplate('item/edit.html', [
 			'moneyFlow' => $moneyFlow,
-			'categories' => MoneyFlow::returnAllCategoriesNames($moneyFlow->type)
+			'categories' => MoneyFlow::returnAllCategoriesNamesOfCurrUser($moneyFlow->type)
 		]);
-	}
+		}
 	}
 	
 	/**
@@ -164,7 +164,7 @@ class Item extends Authenticated{
 		} else {
 			View::renderTemplate('item/edit.html', [
 				'moneyFlow' => $moneyFlow,
-				'categories' => MoneyFlow::returnAllCategoriesNames($moneyFlow->type)
+				'categories' => MoneyFlow::returnAllCategoriesNamesOfCurrUser($moneyFlow->type)
 			]);
 		}
 	}
