@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}Category rename{% endblock %}
+
+{% block body %}
+
+<h1>Category rename</h1>
+
+
+	
+	<div class="row rounded py-2 {{ type }}">
+		<div class="col-sm-2">{{ category }}</div>
+		<form method="post" action="/category/update" id="formItem" class="col-sm-2">
+			<input type="text" id="name" name="name" value="{{ name }}" class="form-control" />
+			<input type="hidden" id="type" name="type" value="{{ type }}" />
+			<input type="hidden" id="id" name="id" value="{{ id }}" />
+			<button type="submit" class="btn btn-default">Rename</button>
+		</form>
+
+	</div>
+
+{% endblock %}

@@ -181,12 +181,22 @@ class MoneyFlow extends \Core\Model{
 	*
 	* @return mixed MoneyFlow if found, false otherwise
 	*/
-	public static function findIdByCategoryName($name)	{
-		$sql = 'SELECT * FROM money_flows_categories WHERE name = :name';
-		
+	public static function findIdByCategoryName($name , $type='')	{
+		$sql = 'SELECT *
+				FROM money_flows_categories
+				WHERE 	name		=	:name
+				AND		user_id		=	:user_id';
+		if($type != ''){
+			$sql .= "\nAND type = :type";
+		}
 		$db = static::getDB();
 		$stmt = $db->prepare($sql);
 		$stmt->bindParam(':name', $name, PDO::PARAM_STR);
+		$stmt->bindValue(':user_id', $_SESSION['user_id'] , PDO::PARAM_INT);
+		
+		if($type != ""){
+			$stmt->bindParam(':type', $type, PDO::PARAM_STR);
+		}
 		
 		$stmt->setFetchMode(PDO::FETCH_CLASS, get_called_class());
 		
@@ -200,11 +210,15 @@ class MoneyFlow extends \Core\Model{
 	*
 	* @return  array of string
 	*/
-	public static function returnAllCategoriesNames($type)	{
-		$sql = 'SELECT name FROM money_flows_categories WHERE type=:type';
+	public static function returnAllCategoriesNamesOfCurrUser($type)	{
+		$sql = 'SELECT name 
+				FROM money_flows_categories 
+				WHERE	type		=	:type
+				AND		user_id		=	:user_id';
 		
 		$db = static::getDB();
 		$stmt = $db->prepare($sql);
+		$stmt->bindValue(':user_id', $_SESSION['user_id'] , PDO::PARAM_INT);
 		$stmt->bindParam(':type', $type, PDO::PARAM_STR);
 		
 		$stmt->execute();
@@ -251,7 +265,7 @@ class MoneyFlow extends \Core\Model{
 	 *
 	 * @return boolean True if the data was updated, false otherwise
 	 */
-	public function updateProfile($data){
+	public function updateMoneyFlow($data){
 		$this->name			=	$data['name'];
 		$this->category		=	$data['category'];
 		$this->amount		=	$data['amount'];
@@ -308,5 +322,61 @@ class MoneyFlow extends \Core\Model{
 			return $stmt->execute();
 		}
 		return false;
+	}
+	
+	/**
+	 * Update the money flow category
+	 *
+	 * @param array $data Data from the money flow profile form
+	 *
+	 * @return boolean True if the data was updated, false otherwise
+	 */
+	public static function updateMoneyFlowCategory($id , $name , $type){
+		
+		if	(!MoneyFlow::findIdByCategoryName($name , $type)){
+			
+			$sql = 'UPDATE	money_flows_categories
+					SET		name = :name
+					WHERE	id		=	:id
+					AND		user_id	=	:id_user
+					AND		type	=	:type';
+											  
+			$db = static::getDB();
+			$stmt = $db->prepare($sql);
+												  
+			$stmt->bindValue(':name', $name, PDO::PARAM_STR);
+			$stmt->bindValue(':id', $id, PDO::PARAM_INT);
+			$stmt->bindValue(':id_user', $_SESSION['user_id'] , PDO::PARAM_INT);
+			$stmt->bindParam(':type', $type, PDO::PARAM_STR);
+
+			
+			return $stmt->execute();
+		}
+		return false;
+	}
+	
+	/**
+	 * Delete the money flow category and conected with it money flows
+	 *
+	 * @param array $data Data from the money flow category delete form 
+	 *
+	 * @return boolean True if the data was updated, false otherwise
+	 */
+	public static function deleteMoneyFlowCategoryAndConnectedMF($id){
+		$sql = 'DELETE mf , mfc
+				FROM money_flows_categories AS mfc
+				INNER JOIN money_flows AS mf
+				ON mfc.id = mf.category_id
+				WHERE mfc.id = :id
+				AND mfc.user_id = :id_user';
+										  
+		$db = static::getDB();
+		$stmt = $db->prepare($sql);
+											  
+		$stmt->bindValue(':id', $id, PDO::PARAM_INT);
+		$stmt->bindValue(':id_user', $_SESSION['user_id'] , PDO::PARAM_INT);
+
+		
+		return $stmt->execute();
 	}
 }

@@ -18,7 +18,11 @@
 				<ul class="navbar-nav mr-auto navbar-right" >
 					{% if current_user %}
 						<li class="nav-item"><a href = "/profile/show" class="nav-link" >Profile</a></li>
-						<li class="nav-item"><a href = "/item/new-expense" class="nav-link" >Item</a></li>
+						<li class="nav-item"><a href = "/item/new-expense" class="nav-link" >New expense</a></li>
+						<li class="nav-item"><a href = "/item/new-income" class="nav-link" >New income</a></li>
+						<li class="nav-item"><a href = "/item/show" class="nav-link" >Show bilans</a></li>
+						<li class="nav-item"><a href = "/category/show-expense" class="nav-link" >Show expense categories</a></li>
+						<li class="nav-item"><a href = "/category/show-income" class="nav-link" >Show income categories</a></li>
 						<li class="nav-item"><a href = "/logout" class="nav-link" >Log Out</a></li>
 					{% endif %}
 				</ul>
