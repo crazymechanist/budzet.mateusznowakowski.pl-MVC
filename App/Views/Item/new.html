@@ -20,7 +20,7 @@
 		
 		today = yyyy + '-' + mm + '-' + dd;
 		
-		document.getElementById("inputDate").defaultValue = today;
+		{% if moneyFlow.date is  empty %}document.getElementById("inputDate").defaultValue = today;{% endif %}
 	}
 </script>
 

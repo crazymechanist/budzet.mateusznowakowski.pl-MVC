@@ -52,9 +52,14 @@ class Item extends Authenticated{
 	 * @return void
 	 */
 	public function showAction(){
-		$moneyFlows = MoneyFlow::returnMoneyFlowsOfCurrentUser();
+		$moneyFlowsSnF = new MoneyFlowFilteringSorting($_GET);
+		$moneyFlows = $moneyFlowsSnF->returnMoneyFlows();
+		$pages = floor((count($moneyFlows)+20)/20);
+		var_dump($moneyFlowsSnF);
 		View::renderTemplate('Item/show.html',[
-			'moneyFlows' => $moneyFlows
+			'moneyFlows' => $moneyFlows,
+			'filters' => $moneyFlowsSnF,
+			'pages'	=> $pages
 		]);
 	}
 	
