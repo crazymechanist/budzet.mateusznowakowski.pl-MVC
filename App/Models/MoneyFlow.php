@@ -365,7 +365,7 @@ class MoneyFlow extends \Core\Model{
 	public static function deleteMoneyFlowCategoryAndConnectedMF($id){
 		$sql = 'DELETE mf , mfc
 				FROM money_flows_categories AS mfc
-				INNER JOIN money_flows AS mf
+				LEFT OUTER JOIN money_flows AS mf
 				ON mfc.id = mf.category_id
 				WHERE mfc.id = :id
 				AND mfc.user_id = :id_user';
@@ -378,5 +378,32 @@ class MoneyFlow extends \Core\Model{
 
 		
 		return $stmt->execute();
+	}
+	
+	/**
+	 * Add new money flow category
+	 *
+	 * @param array $data Data from the money flow profile form
+	 *
+	 * @return boolean True if the data was updated, false otherwise
+	 */
+	public static function newMoneyFlowCategory($name , $type){
+		
+		if	(!MoneyFlow::findIdByCategoryName($name , $type)){
+			
+			$sql = 'INSERT INTO `money_flows_categories` (`id`, `user_id`, `type`, `name`) 
+			VALUES (NULL, :id_user , :type , :name)';
+											  
+			$db = static::getDB();
+			$stmt = $db->prepare($sql);
+												  
+			$stmt->bindValue(':name', $name, PDO::PARAM_STR);
+			$stmt->bindValue(':id_user', $_SESSION['user_id'] , PDO::PARAM_INT);
+			$stmt->bindParam(':type', $type, PDO::PARAM_STR);
+
+			
+			return $stmt->execute();
+		}
+		return false;
 	}
 }

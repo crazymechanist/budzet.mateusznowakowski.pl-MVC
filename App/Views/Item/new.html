@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}New item{% endblock %}
+{% block title %}New {{ type }}{% endblock %}
 
 {% block footer %}
 <script>
@@ -31,7 +31,7 @@
 
 {% block body %}
 
-<h1>New item</h1>
+<h1>New {{ type }}</h1>
 
 {% if moneyFlow.errors is not empty %}
 <p>Errors:</p>
@@ -66,7 +66,7 @@
 		<label for="inputCategory">Category:</label>
 		
 		<select name="category" id="inputCategory" class="form-control">
-			{{ moneyFlow.category ? "<option>{moneyFlow.category}</option>" : ''}}
+			{% if moneyFlow.category is not empty %}<option> {{ moneyFlow.category }} </option>{% endif %}
 			{% for category in categories %}
 				{% if category != moneyFlow.category %}
 				<option>{{ category }}</option>

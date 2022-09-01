@@ -83,7 +83,14 @@ class Category extends Authenticated{
 	 * @return void
 	 */
 	public function newAction(){
-		var_dump($_POST);
+		$name = $_POST['newCategory'];
+		$type = $_POST['type'];
+		if(MoneyFlow::newMoneyFlowCategory($name , $type)){
+			Flash::addMessage('Operation successful');
+		} else {
+			Flash::addMessage('Operation unsuccessful' , Flash::WARNING);
+		}
+		$this->redirect("/category/show-$type");
 	}
 
 	/**
