@@ -54,8 +54,8 @@ class Item extends Authenticated{
 	public function showAction(){
 		$moneyFlowsSnF = new MoneyFlowFilteringSorting($_GET);
 		$moneyFlows = $moneyFlowsSnF->returnMoneyFlows();
-		$pages = floor((count($moneyFlows)+20)/20);
-		var_dump($moneyFlowsSnF);
+		$iop=$moneyFlowsSnF->itemsOnPage;
+		$pages = floor((count($moneyFlows)+$iop)/$iop);
 		View::renderTemplate('Item/show.html',[
 			'moneyFlows' => $moneyFlows,
 			'filters' => $moneyFlowsSnF,
