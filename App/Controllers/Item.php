@@ -6,6 +6,7 @@ use Core\View;
 use App\Flash;
 use App\Models\MoneyFlow;
 use App\Models\MoneyFlowFilteringSorting;
+use App\Models\MoneyFlowcategory;
 use App\Controllers\Authenticated;
 
 /**
@@ -23,7 +24,7 @@ class Item extends Authenticated{
 	 */
 	public function newExpenseAction(){
 		$type = "expense";
-		$categories = MoneyFlow::returnAllCategoriesNamesOfCurrUser($type);
+		$categories = MoneyFlowCategory::returnAll($type);
 
 		View::renderTemplate('Item/new.html',[
 			'type' => $type,
@@ -38,7 +39,7 @@ class Item extends Authenticated{
 	 */
 	public function newIncomeAction(){
 		$type = "income";
-		$categories = MoneyFlow::returnAllCategoriesNamesOfCurrUser($type);
+		$categories = MoneyFlowCategory::returnAll($type);
 
 		View::renderTemplate('Item/new.html',[
 			'type' => $type,
@@ -54,8 +55,10 @@ class Item extends Authenticated{
 	public function showAction(){
 		$moneyFlowsSnF = new MoneyFlowFilteringSorting($_GET);
 		$moneyFlows = $moneyFlowsSnF->returnMoneyFlows();
-		$iop=$moneyFlowsSnF->itemsOnPage;
-		$pages = floor((count($moneyFlows)+$iop)/$iop);
+		$iop= $moneyFlowsSnF->itemsOnPage;
+		$itemCount = $moneyFlowsSnF->itemCount;
+		$page_float=($itemCount+$iop)/$iop;
+		$pages = floor($page_float);
 		View::renderTemplate('Item/show.html',[
 			'moneyFlows' => $moneyFlows,
 			'filters' => $moneyFlowsSnF,
@@ -73,7 +76,7 @@ class Item extends Authenticated{
 			$moneyFlow = new MoneyFlow($_POST);
 			$_SESSION['type'] = $moneyFlow->type;
 			$url = '/item/new-' . $_SESSION['type'];
-			$categories = MoneyFlow::returnAllCategoriesNamesOfCurrUser($_SESSION['type']);
+			$categories = MoneyFlowCategory::returnAll($_SESSION['type']);
 			if ($moneyFlow->save()) {
 				Flash::addMessage('Create successful');
 				View::renderTemplate('Item/new.html', [
@@ -108,7 +111,7 @@ class Item extends Authenticated{
 	public function editAction(){
 		if($moneyFlows= MoneyFlow::returnMoneyFlowsOfCurrentUser($_GET['id'])){
 			$moneyFlow=$moneyFlows[0];
-			$categories = MoneyFlow::returnAllCategoriesNamesOfCurrUser($moneyFlow->type);
+			$categories = MoneyFlowCategory::returnAll($moneyFlow->type);
 			View::renderTemplate('Item/edit.html',[
 				'moneyFlow' => $moneyFlow,
 				'categories' => $categories
@@ -133,7 +136,7 @@ class Item extends Authenticated{
 		} else {
 		View::renderTemplate('item/edit.html', [
 			'moneyFlow' => $moneyFlow,
-			'categories' => MoneyFlow::returnAllCategoriesNamesOfCurrUser($moneyFlow->type)
+			'categories' => MoneyFlowCategory::returnAll($moneyFlow->type)
 		]);
 		}
 	}
@@ -144,7 +147,7 @@ class Item extends Authenticated{
 	 * @return void
 	 */
 	public function confirmDelete(){
-		if($moneyFlows= MoneyFlow::returnMoneyFlowsOfCurrentUser($_GET['id'])){
+		if($moneyFlows= MoneyFlow::returnMF($_GET['id'])){
 			$moneyFlow=$moneyFlows[0];
 			View::renderTemplate('Item/confirm_delete.html',[
 				'moneyFlow' => $moneyFlow
@@ -161,7 +164,7 @@ class Item extends Authenticated{
 	 */
 	public function deleteAction(){
 		$moneyFlow = new MoneyFlow;
-		if	($moneyFlow->deleteProfile($_POST['id'])){
+		if	($moneyFlow->delete($_POST['id'])){
 		
 		Flash::addMessage('Item deleted');
 		
@@ -169,8 +172,9 @@ class Item extends Authenticated{
 		} else {
 			View::renderTemplate('item/edit.html', [
 				'moneyFlow' => $moneyFlow,
-				'categories' => MoneyFlow::returnAllCategoriesNamesOfCurrUser($moneyFlow->type)
+				'categories' => MoneyFlowCategory::returnAll($moneyFlow->type)
 			]);
 		}
 	}
+	
 }	

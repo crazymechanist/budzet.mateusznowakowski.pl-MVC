@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use \App\Models\MoneyFlow;
+use \App\Models\MoneyFlowCategory;
 use \Core\View;
 use App\Flash;
 use App\Controllers\Authenticated;
@@ -39,7 +40,7 @@ class Category extends Authenticated{
 	 */
 	public function validateCategoryAction(){
 		 $is_valid = false;
-		if(MoneyFlow::findIdByCategoryName($_GET['category'] ?? null)){
+		if(MoneyFlowCategory::findIdByName($_GET['category'] ?? null)){
 			$is_valid = true;
 		}
 		
@@ -54,7 +55,7 @@ class Category extends Authenticated{
 	 */
 	public function showExpenseAction(){
 		$type = "expense";
-		$categories = MoneyFlow::returnAllCategoriesNamesOfCurrUser($type);
+		$categories = MoneyFlowCategory::returnAll($type);
 
 		View::renderTemplate('Category/show.html',[
 			'type' => $type,
@@ -69,7 +70,7 @@ class Category extends Authenticated{
 	 */
 	public function showIncomeAction(){
 		$type = "income";
-		$categories = MoneyFlow::returnAllCategoriesNamesOfCurrUser($type);
+		$categories = MoneyFlowCategory::returnAll($type);
 
 		View::renderTemplate('Category/show.html',[
 			'type' => $type,
@@ -83,14 +84,13 @@ class Category extends Authenticated{
 	 * @return void
 	 */
 	public function newAction(){
-		$name = $_POST['newCategory'];
-		$type = $_POST['type'];
-		if(MoneyFlow::newMoneyFlowCategory($name , $type)){
+		$category = new MoneyFlowCategory($_POST);
+		if($category->save()){
 			Flash::addMessage('Operation successful');
 		} else {
-			Flash::addMessage('Operation unsuccessful' , Flash::WARNING);
+			Flash::addMessage('Operation unsuccessful.', Flash::WARNING);
 		}
-		$this->redirect("/category/show-$type");
+		$this->redirect("/category/show-$category->type");
 	}
 
 	/**
@@ -99,9 +99,9 @@ class Category extends Authenticated{
 	 * @return void
 	 */
 	public function renameAction(){
-		$type = $_GET['type'];
 		$name = $_GET['name'];
-		$id = MoneyFlow::findIdByCategoryName($name,$type)->id;
+		$type = $_GET['type'];
+		$id = MoneyFlowCategory::findIdByName($name,$type)->id;
 		View::renderTemplate('Category/rename.html',[
 			'type'	=>	$type,
 			'name'	=>	$name,
@@ -115,19 +115,15 @@ class Category extends Authenticated{
 	 * @return void
 	 */
 	public function updateAction(){
-		$type = $_POST['type'];
-		$name = $_POST['name'];
-		$id = $_POST['id'];
-		if	(MoneyFlow::updateMoneyFlowCategory($id , $name , $type)){
-		
+		$category = new MoneyFlowCategory;
+		if	($category->update($_POST)){
 		Flash::addMessage('Changes saved');
-		
-		$this->redirect("/category/show-$type");
+		$this->redirect('/category/show-'.$_POST['type']);
 		} else {
 		View::renderTemplate('category/rename.html', [
-			'type'	=>	$type,
-			'name'	=>	$name,
-			'id'	=>	$id
+			'type'	=>	$_POST['type'],
+			'name'	=>	$_POST['name'],
+			'id'	=>	$_POST['id']
 		]);
 		}
 	}
@@ -140,7 +136,7 @@ class Category extends Authenticated{
 	public function confirmDeleteAction(){
 		$type = $_GET['type'];
 		$name = $_GET['name'];
-		$id = MoneyFlow::findIdByCategoryName($name , $type)->id;
+		$id = MoneyFlowCategory::findIdByName($name , $type)->id;
 		View::renderTemplate('category/confirm_delete.html', [
 			'type'	=>	$type,
 			'name'	=>	$name,
@@ -154,12 +150,12 @@ class Category extends Authenticated{
 	 * @return void
 	 */
 	public function deleteAction(){
-		$type = $_POST['type'];
-		if(MoneyFlow::deleteMoneyFlowCategoryAndConnectedMF($_POST['id'])){
+		$category = new MoneyFlowCategory($_POST);
+		if($category->delete($category->id)){
 			Flash::addMessage('Operation successful');
 		} else {
 			Flash::addMessage('Operation unsuccessful' , Flash::WARNING);
 		}
-		$this->redirect("/category/show-$type");
+		$this->redirect('/category/show-'.$category->type);
 	}
 }
