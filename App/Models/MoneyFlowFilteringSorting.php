@@ -62,7 +62,7 @@ class MoneyFlowFilteringSorting extends MoneyFlow{
 	}
 	
 	protected function generateSQL(){
-		$sql = 'SELECT		flow.id , flow.name , flow.type , date , description, amount, id_user
+		$sql = 'SELECT		flow.id , flow.name , cat.name AS category, flow.type , date , description, amount, id_user
 				FROM		money_flows				AS		flow 
 				INNER JOIN	money_flows_categories	AS		cat 
 				ON			flow.category_id		=		cat.id
@@ -94,6 +94,10 @@ class MoneyFlowFilteringSorting extends MoneyFlow{
 					OR flow.name LIKE :search)";
 		}
 		
+		return $sql;
+	}
+	
+	protected function generateSQLsorting($sql){
 		switch($this->sort)
 		{
 			case $this->sortShortTypes[0];
@@ -121,16 +125,7 @@ class MoneyFlowFilteringSorting extends MoneyFlow{
 		return $sql;
 	}
 	
-	/**
-	 * Returning  money flows of current user according to specified filter
-	 *
-	 * @return  array of string
-	 */
-	public function returnMoneyFlows()	{
-		$sql = $this->generateSQL();
-
-		$db = static::getDB();
-		$stmt = $db->prepare($sql);
+	protected function binding($stmt , $count = false){
 		
 		$stmt->bindValue(':id_user', $_SESSION['user_id'] , PDO::PARAM_INT);
 		
@@ -155,12 +150,41 @@ class MoneyFlowFilteringSorting extends MoneyFlow{
 			$stmt->bindValue(':search', $s , PDO::PARAM_STR);
 		}
 		
-		$stmt->bindValue(':limit',$this->itemsOnPage , PDO::PARAM_INT);
-		$stmt->bindValue(':offset',(($this->page)-1)*$this->itemsOnPage , PDO::PARAM_INT);
+		if(!$count){
+			$stmt->bindValue(':limit',$this->itemsOnPage , PDO::PARAM_INT);
+			$stmt->bindValue(':offset',(($this->page)-1)*$this->itemsOnPage , PDO::PARAM_INT);
+		}
+	}
+	/**
+	 * Returning  money flows of current user according to specified filter
+	 *
+	 * @return  array of string
+	 */
+	public function returnMoneyFlows()	{
+		$this->setCount();
+		$sql = $this->generateSQL();
+		$sql = $this->generateSQLsorting($sql);
+
+		$db = static::getDB();
+		$stmt = $db->prepare($sql);
+		
+		$this->binding($stmt , false);
 		
 		$stmt->execute();
-		
+
 		return $stmt->fetchAll(PDO::FETCH_CLASS);
+	}
+	
+	private function setCount(){
+		$sql = $this->generateSQL();
+
+		$db = static::getDB();
+		$stmt = $db->prepare($sql);
+		
+		$this->binding($stmt , true);
+		
+		$stmt->execute();
+		$this->itemCount = $stmt->rowCount();
 	}
 }						
 								

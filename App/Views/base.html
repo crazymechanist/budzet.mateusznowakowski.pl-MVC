@@ -1,53 +1,117 @@
 <!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>{% block title %}{% endblock %}</title>
-	<link rel="stylesheet" href="/bootstrap/bootstrap.css" crossorigin="anonymous" /> 
-	<link rel="stylesheet" href="/css/styles.css"/>
-	
-</head>
-<body>
-	
-	<div class="container">
-		<nav class="navbar navbar-expand-md navbar-light">
-			<div class="container-fluid">
-				<ul class="navbar-nav mr-auto" >
-					<li class="nav-item"><a href = "/" class="nav-link" >Home</a></li>
-				</ul>
-				<ul class="navbar-nav mr-auto navbar-right" >
-					{% if current_user %}
-						<li class="nav-item"><a href = "/profile/show" class="nav-link" >Profile</a></li>
-						<li class="nav-item"><a href = "/item/new-expense" class="nav-link" >New expense</a></li>
-						<li class="nav-item"><a href = "/item/new-income" class="nav-link" >New income</a></li>
-						<li class="nav-item"><a href = "/item/show" class="nav-link" >Show bilans</a></li>
-						<li class="nav-item"><a href = "/category/show-expense" class="nav-link" >Show expense categories</a></li>
-						<li class="nav-item"><a href = "/category/show-income" class="nav-link" >Show income categories</a></li>
-						<li class="nav-item"><a href = "/logout" class="nav-link" >Log Out</a></li>
-					{% endif %}
-				</ul>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<title>Skarbonka</title>
+		<meta name="description" content="Application for household budget accounting">
+		<meta name="author" content="Mateusz Nowakowski">
+		<meta http-equiv="X-Ua-Compatible" content="IE=edge">
+		
+		<!-- Bootstrap core CSS -->
+		<link rel="stylesheet" href="/bootstrap/bootstrap.css" crossorigin="anonymous" /> 
+		
+		
+		<!-- Custom styles for this template -->
+		<link rel="stylesheet" href="/css/headers.css"/>
+		<link rel="stylesheet" href="/css/styles.css"/>
+		
+		<!--[if lt IE 9]>
+			<script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.min.js"></script>
+		<![endif]-->
+		
+	</head>
+	<body>
+		{% include 'svg.html' %}
+		
+		<header>
+			<nav class=" px-3 py-2 bg-light text-white">
+				
+				<div class="container">
+					<div class="navbar d-flex flex-wrap align-items-center justify-content-center justify-content-xl-start border-bottom">
+							<a href="/" class="d-flex align-items-center my-2 my-xl-0 me-xl-auto text-dark text-decoration-none">
+								<svg class="bi me-2" width="50" height="50" role="img" aria-label="Pig"><use xlink:href="#pig"/></svg>
+								<h5 class="h3 d-inline-block align-center">Piggy bank</h5>
+							</a>
+						
+						<ul class="nav col-12 col-xl-auto row-cols-2 row-cols-sm-4 row-cols-xl-auto my-2 justify-content-center my-md-0 text-small">
+							<li class="nav-item text-center col menu-tile">
+								<a href="/" class="nav-link text-dark">
+									<svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#home"/></svg>
+									Home
+								</a>
+							</li>
+							{% if current_user %}
+							<li class="nav-item col text-center">
+								<a href="/item/new-expense" class="nav-link text-dark">
+									<svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#lost-money"/></svg>
+									New expense
+								</a>
+							</li>
+							<li class="nav-item col text-center">
+								<a href="/item/new-income" class="nav-link text-dark">
+									<svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#earn-money"/></svg>
+									New income
+								</a>
+							</li>
+							<li class="nav-item col text-center">
+								<a href="/item/show" class="nav-link text-dark">
+									<svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#table"/></svg>
+									Show bilans
+								</a>
+							</li>
+							<li class="nav-item col text-center">
+								<a href="/category/show-expense" class="nav-link text-dark">
+									<svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#clipboard-minus"/></svg>
+									Show expense<br>categories
+								</a>
+							</li>
+							<li class="nav-item col text-center">
+								<a href="/category/show-income" class="nav-link text-dark">
+									<svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#clipboard-plus"/></svg>
+									Show income<br>categories
+								</a>
+							</li>
+							<li class="nav-item col text-center">
+								<a href="/profile/show" class="nav-link text-dark">
+									<svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#people-circle"/></svg>
+									Profile
+								</a>
+							</li>
+							<li class="nav-item col text-center">
+								<a href="/logout" class="nav-link text-dark">
+									<svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#door-open"/></svg>
+									Log out
+								</a>
+							</li>
+							{% endif %}
+							</ul>
+						</div>
+					</div>
+			</nav>
+		</header>
+		
+		<main>
+			<div class="container">
+				{% for message in flash_messages %}
+				<div class = "alert alert-{{ message.type }}">
+					{{ message.body }}
+				</div>
+				{% endfor %}
+				
+				{% block body %}
+				{% endblock %}
 			</div>
-		</nav>
+		</main>
 		
+		<script src="/docs/5.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+		<script	src="https://code.jquery.com/jquery-3.6.0.min.js"
+		integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+		crossorigin="anonymous"></script>
+		<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+		<script src="/bootstrap/bootstrap.bundle.js"></script>
 		
-		{% for message in flash_messages %}
-			<div class = "alert alert-{{ message.type }}">
-				{{ message.body }}
-			</div>
-		{% endfor %}
-		
-		{% block body %}
+		{% block footer %}
 		{% endblock %}
-	</div>
-	
-	<script	src="https://code.jquery.com/jquery-3.6.0.min.js"
-			integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
-			crossorigin="anonymous"></script>
-	<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
-	<script src="/bootstrap/bootstrap.bundle.js"></script>
-
-    {% block footer %}
-    {% endblock %}
-	
-</body>
+	</body>
 </html>
