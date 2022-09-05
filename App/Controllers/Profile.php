@@ -58,7 +58,7 @@ class Profile extends Authenticated	{
 			
 			Flash::addMessage('Changes saved');
 			
-			$this->redirect('/profile/show');
+			$this->redirect('/Profile/show');
 		} else {
 			View::renderTemplate('Profile/edit.html', [
 				'user' => $this->user

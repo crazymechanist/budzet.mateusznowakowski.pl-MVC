@@ -77,7 +77,7 @@ class Item extends Authenticated{
 		if( isset($_POST['type'])){
 			$moneyFlow = new MoneyFlow($_POST);
 			$_SESSION['type'] = $moneyFlow->type;
-			$url = '/item/new-' . $_SESSION['type'];
+			$url = '/Item/new-' . $_SESSION['type'];
 			$categories = MoneyFlowCategory::returnAll($_SESSION['type']);
 			if ($moneyFlow->save()) {
 				Flash::addMessage('Create successful');
@@ -96,7 +96,7 @@ class Item extends Authenticated{
 			}
 		} else {
 			if (isset($_SESSION['type'])){
-				$url = '/item/new-' . $_SESSION['type'];
+				$url = '/Item/new-' . $_SESSION['type'];
 				$this->redirect($url);
 			} else {
 				$this->redirect('/');
@@ -119,7 +119,7 @@ class Item extends Authenticated{
 				'categories' => $categories
 			]);
 		} else {
-			$this->redirect('/item/show');
+			$this->redirect('/Item/show');
 		}
 	}
 	
@@ -134,9 +134,9 @@ class Item extends Authenticated{
 		
 		Flash::addMessage('Changes saved');
 		
-		$this->redirect('/item/show');
+		$this->redirect('/Item/show');
 		} else {
-		View::renderTemplate('item/edit.html', [
+		View::renderTemplate('Item/edit.html', [
 			'moneyFlow' => $moneyFlow,
 			'categories' => MoneyFlowCategory::returnAll($moneyFlow->type)
 		]);
@@ -170,9 +170,9 @@ class Item extends Authenticated{
 		
 		Flash::addMessage('Item deleted');
 		
-		$this->redirect('/item/show');
+		$this->redirect('/Item/show');
 		} else {
-			View::renderTemplate('item/edit.html', [
+			View::renderTemplate('Item/edit.html', [
 				'moneyFlow' => $moneyFlow,
 				'categories' => MoneyFlowCategory::returnAll($moneyFlow->type)
 			]);
