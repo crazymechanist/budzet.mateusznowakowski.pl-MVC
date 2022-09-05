@@ -130,7 +130,7 @@ class Item extends Authenticated{
 	 */
 	public function updateAction(){
 		$moneyFlow = new MoneyFlow;
-		if	($moneyFlow->updateMoneyFlow($_POST)){
+		if	($moneyFlow->update($_POST)){
 		
 		Flash::addMessage('Changes saved');
 		

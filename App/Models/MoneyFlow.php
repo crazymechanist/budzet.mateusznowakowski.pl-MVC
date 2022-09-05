@@ -230,7 +230,7 @@ class MoneyFlow extends \Core\Model{
 		
 		$this->validate(false);
 		
-		if	(empty($this->errors) && $this->returnMoneyFlowsOfCurrentUser($this->id)){
+		if	(empty($this->errors) && $this->returnMF($this->id)){
 			
 			$sql = 'UPDATE	money_flows 
 					SET		name = :name, category_id = :category_id, amount = :amount, date = :date, description = :description
