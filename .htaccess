@@ -1,0 +1,7 @@
+
+RewriteEngine on
+RewriteCond %{HTTP_HOST} ^budzet\.mateusznowakowski\.pl$
+RewriteRule ^/?$ "https\:\/\/budzet\.mateusznowakowski\.pl\/public" [R=301,L]
+RewriteCond %{HTTP_HOST} ^budget\.mateusznowakowski\.pl$
+RewriteRule ^/?$ "https\:\/\/budget\.mateusznowakowski\.pl\/public" [R=301,L]
+

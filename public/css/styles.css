@@ -1,6 +1,6 @@
 /* General Website Style rules */
 .form-start {
-	max-width: 330px;
+	max-width: 400px;
 	padding: 15px;
 }
 
@@ -9,7 +9,7 @@
 }
 
 label.error{
-	margin-left: 300px;
+	margin-left: 375px;
 	margin-top: 10px;
 	display: block;
 	color: #ff0000;
