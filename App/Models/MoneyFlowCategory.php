@@ -97,7 +97,7 @@ class MoneyFlowCategory extends \Core\Model{
 	 * @return boolean True if the data was updated, false otherwise
 	 */
 	public function save(){
-		if	(!MoneyFlow::findIdByCategoryName($this->name , $this->type)){
+		if	(!$this::findIdByName($this->name , $this->type)){
 			
 			$sql = 'INSERT INTO `money_flows_categories` (`id`, `user_id`, `type`, `name`) 
 			VALUES (NULL, :id_user , :type , :name)';

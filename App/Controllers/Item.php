@@ -59,10 +59,12 @@ class Item extends Authenticated{
 		$itemCount = $moneyFlowsSnF->itemCount;
 		$page_float=($itemCount+$iop)/$iop;
 		$pages = floor($page_float);
+		$chart=$moneyFlowsSnF->getChartData();
 		View::renderTemplate('Item/show.html',[
 			'moneyFlows' => $moneyFlows,
 			'filters' => $moneyFlowsSnF,
-			'pages'	=> $pages
+			'pages'	=> $pages,
+			'chartData' => $chart
 		]);
 	}
 	
@@ -109,7 +111,7 @@ class Item extends Authenticated{
 	 * @return void
 	 */
 	public function editAction(){
-		if($moneyFlows= MoneyFlow::returnMoneyFlowsOfCurrentUser($_GET['id'])){
+		if($moneyFlows= MoneyFlow::returnMF($_GET['id'])){
 			$moneyFlow=$moneyFlows[0];
 			$categories = MoneyFlowCategory::returnAll($moneyFlow->type);
 			View::renderTemplate('Item/edit.html',[
