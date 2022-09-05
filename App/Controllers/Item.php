@@ -6,7 +6,7 @@ use Core\View;
 use App\Flash;
 use App\Models\MoneyFlow;
 use App\Models\MoneyFlowFilteringSorting;
-use App\Models\MoneyFlowcategory;
+use App\Models\MoneyFlowCategory;
 use App\Controllers\Authenticated;
 
 /**

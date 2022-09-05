@@ -67,6 +67,7 @@
 		
 		<select name="category" id="inputCategory" class="form-control">
 			{% if moneyFlow.category is not empty %}<option> {{ moneyFlow.category }} </option>{% endif %}
+			{% if categories is empty %}<option> Please add any category </option>{% endif %}
 			{% for category in categories %}
 			{% if category != moneyFlow.category %}
 			<option>{{ category }}</option>
