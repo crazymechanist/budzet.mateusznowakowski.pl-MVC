@@ -6,9 +6,13 @@
 
     <h1>Welcome</h1>
 	{% if current_user %}
-		Hello {{ current_user.name }}.
+	<div class="d-flex-inline ">
+		Hello {{ current_user.name }}. The application allows you to manage your home budget. In the "Show expense categies" <svg class="bi d-flex-inline mx-auto mb-1" width="24" height="24"><use xlink:href="#clipboard-minus"/></svg> and "Show income categories <svg class="bi d-flex-inline mx-auto mb-1" width="24" height="24"><use xlink:href="#clipboard-plus"/></svg> window, you can add categories for expenses and income. You add new expenses and incomes in the "New expenese" <svg class="bi d-flex-inline mx-auto mb-1" width="24" height="24"><use xlink:href="#lost-money"/></svg>  and "New income" <svg class="bi d-flex-inline mx-auto mb-1" width="24" height="24"><use xlink:href="#earn-money"/></svg>  windows. In the "Show balance" <svg class="bi d-flex-inline mx-auto mb-1" width="24" height="24"><use xlink:href="#table"/></svg>  window you can view the balance sheet. You can change your data in the "Profile" <svg class="bi d-flex-inline mx-auto mb-1" width="24" height="24"><use xlink:href="#people-circle"/></svg>  window.
+	</div>
 	{% else %}
-		<a href="/signup/new"> Sign up </a> or <a href="/login">log in</a>.
+	<div class="d-flex-inline ">
+		Managing your home budget is a difficult task. This application will make them much easier. However, to get started you need your own account. <a href="/signup/new">Sign up </a> or <a href="/login">log in.</a>
+	</div>
 	{% endif %}
 	
 {% endblock %}

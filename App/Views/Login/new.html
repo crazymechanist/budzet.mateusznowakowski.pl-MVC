@@ -4,27 +4,34 @@
 
 {% block body %}
 
-	<h1>Log in</h1>
+<h1 class="d-none">Log in</h1>
 
+<div class="form-start w-100 m-auto py-5">
 	<form action="/login/create" method="post">
-
-		<div class="form-group" >
+		<div class="text-center">
+			<svg class="bi me-2" width="70" height="70" role="img" aria-label="Pig"><use xlink:href="#pig"/></svg>
+			<h1 class="h3 mb-3 fw-normal">Please log in</h1>
+		</div>
+		<div class="form-floating" >
+			<input style="margin-bottom: -1px; border-bottom-right-radius: 0; border-bottom-left-radius: 0;" type="email" id="inputEmail" name="email" placeholder="name@example.com" class="form-control"  value="{{ email }}" required>
 			<label for="inputEmail">Email address</label>
-			<input type="email" id="inputEmail" name="email" placeholder="Email address" autofocus value="{{ email }}" class="form-control" required/>
 		</div>
-		<div class="form-group" >
+		<div class="form-floating " >
+			<input style="margin-bottom: 10px; border-top-left-radius: 0; border-top-right-radius: 0;" type="password" id="inputPassword" name="password" placeholder="Password" class="form-control" required>
 			<label for="inputPassword">Password</label>
-			<input type="password" id="inputPassword" name="password" placeholder="Password" class="form-control" required/>
 		</div>
-		<div class="checkbox">
+		
+		<div class="checkbox mb-3">
 			<label>
-				<input type="checkbox" name="remember_me" {% if remember_me %} checked="checked{% endif %}"/>Remember me
-			</label>		
+				<input type="checkbox" name="remember_me" {% if remember_me %} checked="checked{% endif %}"/> Remember me
+			</label>
 		</div>
-
-		<button type="submit" class="btn btn-default">Log in</button>
-		<a href="/password/forgot">Forgot password?</a>
+		<button class="w-100 btn btn-lg btn-outline-dark" type="submit">Sign in</button>
+		<a class="w-100 btn btn-lg btn-dark my-2" href="/password/forgot">Forgot password?</a>
+		<a class="" href="/signup">Sign up</a>
 
 	</form>
-	
+</div>
+
+
 {% endblock %}

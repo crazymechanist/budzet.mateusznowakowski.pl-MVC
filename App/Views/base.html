@@ -13,7 +13,6 @@
 		
 		
 		<!-- Custom styles for this template -->
-		<link rel="stylesheet" href="/css/headers.css"/>
 		<link rel="stylesheet" href="/css/styles.css"/>
 		
 		<!--[if lt IE 9]>
@@ -29,19 +28,19 @@
 				
 				<div class="container">
 					<div class="navbar d-flex flex-wrap align-items-center justify-content-center justify-content-xl-start border-bottom">
-							<a href="/" class="d-flex align-items-center my-2 my-xl-0 me-xl-auto text-dark text-decoration-none">
-								<svg class="bi me-2" width="50" height="50" role="img" aria-label="Pig"><use xlink:href="#pig"/></svg>
-								<h5 class="h3 d-inline-block align-center">Piggy bank</h5>
-							</a>
+						<a href="/" class="d-flex align-items-center my-2 my-xl-0 me-xl-auto text-dark text-decoration-none">
+							<svg class="bi me-2" width="50" height="50" role="img" aria-label="Pig"><use xlink:href="#pig"/></svg>
+							<h5 class="h3 d-inline-block align-center">Piggy bank</h5>
+						</a>
 						
 						<ul class="nav col-12 col-xl-auto row-cols-2 row-cols-sm-4 row-cols-xl-auto my-2 justify-content-center my-md-0 text-small">
+							{% if current_user %}
 							<li class="nav-item text-center col menu-tile">
 								<a href="/" class="nav-link text-dark">
 									<svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#home"/></svg>
 									Home
 								</a>
 							</li>
-							{% if current_user %}
 							<li class="nav-item col text-center">
 								<a href="/item/new-expense" class="nav-link text-dark">
 									<svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#lost-money"/></svg>
@@ -57,7 +56,7 @@
 							<li class="nav-item col text-center">
 								<a href="/item/show" class="nav-link text-dark">
 									<svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#table"/></svg>
-									Show bilans
+									Show balance
 								</a>
 							</li>
 							<li class="nav-item col text-center">
@@ -85,14 +84,14 @@
 								</a>
 							</li>
 							{% endif %}
-							</ul>
-						</div>
+						</ul>
 					</div>
+				</div>
 			</nav>
 		</header>
 		
 		<main>
-			<div class="container">
+			<div class="container" >
 				{% for message in flash_messages %}
 				<div class = "alert alert-{{ message.type }}">
 					{{ message.body }}
@@ -101,17 +100,41 @@
 				
 				{% block body %}
 				{% endblock %}
+				
+			</div>
+			<div class="py-4">
+			</div>
+			<div class="px-3 bg-light text-white">
+				<div class="container" >
+					<footer class="navbar fixed-bottom bg-light d-flex flex-wrap justify-content-center align-items-center ">
+						<div class="container">
+							<div class="border-top col-12"></div>
+						</div>
+						
+						<div class="col-md-4 d-flex align-items-center">
+							<a href="/" class="mb-3 me-2 mb-md-0 text-muted text-decoration-none lh-1">
+								<svg class="bi" width="30" height="24"><use xlink:href="#pig"/></svg>
+							</a>
+							<span class="mb-3 mb-md-0 text-muted">&copy; 2022 Mateusz Nowakowski</span>
+						</div>
+						
+						<ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
+							<li class="ms-3"><a class="d-none text-muted" href="#"><svg class="bi" width="24" height="24"><use xlink:href="#twitter"/></svg></a></li>
+							<li class="ms-3"><a class="d-none text-muted" href="#"><svg class="bi" width="24" height="24"><use xlink:href="#instagram"/></svg></a></li>
+							<li class="ms-3"><a class="d-none text-muted" href="#"><svg class="bi" width="24" height="24"><use xlink:href="#facebook"/></svg></a></li>
+						</ul>
+					</footer>
+				</div>
 			</div>
 		</main>
 		
-		<script src="/docs/5.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+		{% block scripts %}	{% endblock %}
+		<script src="/bootstrap/bootstrap.bundle.js"></script>
 		<script	src="https://code.jquery.com/jquery-3.6.0.min.js"
 		integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
 		crossorigin="anonymous"></script>
 		<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
-		<script src="/bootstrap/bootstrap.bundle.js"></script>
 		
-		{% block footer %}
-		{% endblock %}
+
 	</body>
-</html>
+	</html>

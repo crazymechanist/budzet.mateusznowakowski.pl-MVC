@@ -1,73 +1,222 @@
 {% extends "base.html" %}
+{% block scripts %}	
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script type="text/javascript"></script>
+
+<script>
+	const dataExpense = {
+		labels: [
+		{% for data in chartData %}
+		{% if data.type == 'expense' %}
+		'{{ data.category }}',
+		{% endif %}
+		{% endfor %}
+		],
+		datasets: [{
+			label: 'Expenses',
+			data: [		
+			{% for data in chartData %}
+			{% if data.type == 'expense' %}
+			'{{ data.sum }}',
+			{% endif %}
+			{% endfor %}
+			],
+			backgroundColor: [
+			'rgb(170, 43, 29)',
+			'rgb(239, 141, 50)',
+			'rgb(255, 140, 140)',
+			'rgb(255, 93, 93)',
+			'rgb(255, 23, 0)',
+			'rgb(255, 142, 0)',
+			'rgb(255, 228, 0)',
+			'rgb(255, 97, 109)',
+			'rgb(255, 97, 109)',
+			],
+			hoverOffset: 4
+		}]
+	};
+	
+	const dataIncome = {
+		labels: [
+		{% for data in chartData %}
+		{% if data.type == 'income' %}
+		'{{ data.category }}',
+		{% set inc ='1' %}
+		{% endif %}
+		{% endfor %}
+		],
+		datasets: [{
+			label: 'Incomes',
+			data: [		
+			{% for data in chartData %}
+			{% if data.type == 'income' %}
+			'{{ data.sum }}',
+			{% endif %}
+			{% endfor %}
+			],
+			backgroundColor: [
+			'rgb(24, 77, 71)',
+			'rgb(150, 187, 124)',
+			'rgb(250, 213, 134)',
+			'rgb(254, 255, 222)',
+			'rgb(221, 255, 188)',
+			'rgb(145, 199, 136)',
+			'rgb(82, 115, 77)',
+			],
+			hoverOffset: 4
+		}]
+	};
+	
+	const configEx = {
+		type: 'pie',
+		data: dataExpense,
+	};
+	
+	const configIn = {
+		type: 'pie',
+		data: dataIncome,
+	};
+	
+	if (dataExpense.datasets[0].data.length != 0) {
+		const expenseChart = new Chart(
+		document.getElementById('chartExpense'),
+		configEx
+		);
+	}
+	
+	if (dataIncome.datasets[0].data.length != 0) {
+	const incomeChart = new Chart(
+    document.getElementById('chartIncome'),
+    configIn
+	);
+	}
+	
+</script>
+
+{% endblock %}
 
 {% block title %}Item show{% endblock %}
 
 {% block body %}
 
-<h1>Item show</h1>
-
+<h1 class="d-none">Item show</h1>
+{{ exp }}
 
 <form method="get" action="/item/show" id="formItem">
-	<label for="inputAmount">Search</label>
-	<input id="inputAmount" name="search" type="text" class="form-control" value="{{ filters.search}}"/>
-	<label for="inputAmount">Min amount [PLN]:</label>
-	<input id="inputAmount" name="min" type="number" step="0.01" min="0" class="form-control"  value="{{ filters.min}}" />
-	<label for="inputAmount">Max amount [PLN]:</label>
-	<input id="inputAmount" name="max" type="number" step="0.01" min="0" class="form-control"  value="{{ filters.max}}" />
-	<label for="inputDate">Start date:</label>
-	<input type="date"  id="sDate" name="sDate" class="form-control" value="{{ filters.sDate}}" />
-	<label for="inputDate">End date:</label>
-	<input type="date"  id="eDate" name="eDate" class="form-control" value="{{ filters.eDate}}" />
-	<select name="sort" id="sort" class="form-control">
-		{% if filters.sort is not empty %}<option value="{{ filters.sort }}"> {{ filters.sortDescTypes[filters.sort] }} </option>{% endif %}
-		{% for short in filters.sortShortTypes %}
-			{% if  filters.sort  != short %}
-			<option value="{{ short }}"> {{ filters.sortDescTypes[short] }} </option>
-			{% endif %}
-		{% endfor %}
-	</select>
-	<select name="page" id="page" class="form-control">
-		{% if filters.page is not empty %}<option value="{{ filters.page }}"> {{ (filters.page-1)*20+1 }}-{{ filters.page*20 }} </option>{% endif %}
-		{% for i in 1..pages %}
-			{% if  i  != filters.page %}
-			<option value="{{ i }}">	{{ (i-1)*20+1 }}-{{ i*20 }}	</option>
-			{% endif %}
-		{% endfor %}
-	</select>
-	<button type="submit" class="btn btn-default">Go</button>
-	<a href="\item\show?page={{ filters.page }}&sort={{ filters.sort }}" >Clear</a>
+	<div class="col-12">
+		<label for="inputAmount">Search</label>
+		<input id="inputAmount" name="search" type="text" class="form-control" value="{{ filters.search}}"/>
+	</div>
+	<div class="row">
+		<div class="col">
+			<label for="inputAmount">Min amount [PLN]:</label>
+			<input id="inputAmount" name="min" type="number" step="0.01" min="0" class="form-control"  value="{{ filters.min}}" />
+		</div>
+		<div class="col">
+			<label for="inputAmount">Max amount [PLN]:</label>
+			<input id="inputAmount" name="max" type="number" step="0.01" min="0" class="form-control"  value="{{ filters.max}}" />
+		</div>
+		<div class="col-xl-4 col-0">
+		</div>
+		<div class="col">
+			<label for="inputDate">Start date:</label>
+			<input type="date"  id="sDate" name="sDate" class="form-control" value="{{ filters.sDate}}" />
+		</div>
+		<div class="col">
+			<label for="inputDate">End date:</label>
+			<input type="date"  id="eDate" name="eDate" class="form-control" value="{{ filters.eDate}}" />
+		</div>
+	</div>
+	<div class="row my-2">
+		<div class="col-1">
+		</div>
+		<div class="col-2">
+			<label for="sort">Sort:</label>
+		</div>
+		<div class="col-9">
+			<select name="sort" id="sort" class="form-control">
+				{% if filters.sort is not empty %}<option value="{{ filters.sort }}"> {{ filters.sortDescTypes[filters.sort] }} </option>{% endif %}
+				{% for short in filters.sortShortTypes %}
+				{% if  filters.sort  != short %}
+				<option value="{{ short }}"> {{ filters.sortDescTypes[short] }} </option>
+				{% endif %}
+				{% endfor %}
+			</select>
+		</div>
+	</div>
+	<div class="row my-2">
+		<div class="col-1">
+		</div>
+		<div class="col-2">
+			<label for="page">Items:</label>
+		</div>
+		<div class="col-9">
+			<select name="page" id="page" class="form-control">
+				{% if filters.page is not empty %}<option value="{{ filters.page }}"> {{ (filters.page-1)*20+1 }}-{{ filters.page*20 }} </option>{% endif %}
+				{% for i in 1..pages %}
+				{% if  i  != filters.page %}
+				<option value="{{ i }}">	{{ (i-1)*20+1 }}-{{ i*20 }}	</option>
+				{% endif %}
+				{% endfor %}
+			</select>
+		</div>
+	</div>
+	<div class="row justify-content-end">
+		<div class="col-3">
+			<button type="submit" class="btn btn-outline-dark col-12">Go</button>
+		</div>
+		<div class="col-3">
+			<a class="col-12 btn btn-dark" href="\item\show?page={{ filters.page }}&sort={{ filters.sort }}" >Clear</a>
+		</div>
+	</div>
+	
 </form>
 
 
-{% if moneyFlows is not empty %}
-<ul>
-	{% for moneyFlow in moneyFlows %}
-	<div class="{{ moneyFlow.type }}">
-		<dl class="row">
-			<dt class="col-sm-2 ">Name:</dt>
-			<dd class="col-sm-10">{{ moneyFlow.name }}</dd>
-			<dt class="col-sm-2 ">Category:</dt>
-			<dd class="col-sm-10">{{ moneyFlow.category }}</dd>
-			<dt class="col-sm-2">Amount [PLN]:</dt>
-			<dd class="col-sm-10">{{ moneyFlow.amount }}</dd>
-			<dt class="col-sm-2">Date:</dt>
-			<dd class="col-sm-10">{{ moneyFlow.date }}</dd>
-			<dt class="col-sm-2">Description:</dt>
-			<dd class="col-sm-10">{{ moneyFlow.description }}</dd>
-		</dl>
-		<div class="row">
-			<form method="get" action="/item/edit" id="formItem" class="col-sm-2 ">
-				<input type="hidden" id="id" name="id" value="{{ moneyFlow.id }}">
-				<button type="submit" class="btn btn-default">Edit</button>
-			</form>
-			<form method="get" action="/item/confirm-delete" id="formItem" class="col-sm-2">
-				<input type="hidden" id="id" name="id" value="{{ moneyFlow.id }}">
-				<button type="submit" class="btn btn-default">Delete</button>
-			</form>
+<div class="row mt-5">
+	<div class="col-lg-5 col-12 list-group ">
+		{% if moneyFlows is not empty %}
+		{% for moneyFlow in moneyFlows %}
+		<div class="col-12 list-group-item list-group-item-action " aria-current="true">
+			<div class="row d-flex">
+				<div class="col-2">
+					<svg class="bi d-block {{ moneyFlow.type }}" width="32" height="32"><use xlink:href="#graph-{{ moneyFlow.type }}"/></svg>
+				</div>
+				<div class="col-6 col-sm-7">
+					<h6 class="mb-0">{{ moneyFlow.name }}</h6>
+					<p class="mb-0 opacity-75">Category: {{ moneyFlow.category }}</p>
+					<p class="mb-0 opacity-75 h6">Amount: {{ moneyFlow.amount }} PLN</p>
+					<p class="mb-0 opacity-75">Description</p>
+					
+				</div>
+				<div class="col-4 col-sm-3">
+					<small class="opacity-50 text-nowrap">{{ moneyFlow.date }}</small>
+					<div>
+						<form method="get" action="/item/edit" id="formItem">
+							<input type="hidden" id="id" name="id" value="{{ moneyFlow.id }}">
+							<button type="submit" class="btn btn-default my-1 mx-3"><svg class="bi d-block my-1 flex-shrink-0" width="20" height="20"><use xlink:href="#edit"/></svg></button>
+						</form>
+						<form method="get" action="/item/confirm-delete" id="formItem">
+							<input type="hidden" id="id" name="id" value="{{ moneyFlow.id }}">
+							<button type="submit" class="btn btn-default my-1 mx-3"><svg class="bi d-block my-1 flex-shrink-0" width="20" height="20"><use xlink:href="#trash"/></svg></button>
+						</form>
+					</div>
+				</div>
+				
+			</div>
+		</div>
+		{% endfor %}
+		{% endif %}
+	</div>
+	<div class="col-lg-7 col-12">
+		<div>
+			<canvas id="chartExpense"></canvas>
+		</div>
+		<div>
+			<canvas id="chartIncome"></canvas>
 		</div>
 	</div>
-	{% endfor %}
-</ul>
-{% endif %}
+</div>
+</div>
 
 {% endblock %}
