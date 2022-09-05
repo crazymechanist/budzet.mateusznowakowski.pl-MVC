@@ -4,14 +4,13 @@
 
 {% block body %}
 
-<h1>Category delete</h1>
+<h1 class="d-none">Category delete</h1>
+<h2 class="h6">Do you really want to delete item and all conected money flows?</h1>
 
-
-	
 	<div class="row rounded py-2 {{ type }}">
 		<div>{{ category }}</div>
 		<form method="post" action="/category/delete" id="formItem" class="col-sm-2">
-			<label class="form-label" for="name">Do you really want to delete item and all conected money flows?</label>
+			<label class="form-label" for="name">Delete?</label>
 			<input type="text" aria-label="readonly input example"  id="name" name="name" value="{{ name }}" class="form-control" readonly />
 			<input type="hidden" id="type" name="type" value="{{ type }}" />
 			<input type="hidden" id="id" name="id" value="{{ id }}" />
