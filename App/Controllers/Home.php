@@ -13,16 +13,14 @@ use \App\Auth;
 class Home extends \Core\Controller
 {
 
-    /**
-     * Show the index page
-     *
-     * @return void
-     */
-    public function indexAction(){
+	/**
+	 * Show the index page
+	 *
+	 * @return void
+	 */
+	public function indexAction(){
 		View::renderTemplate('Home/index.html');
-    }
-	
-	public function testAction(){
-		View::renderTemplate('Home\test.html');
 	}
+	
+
 }
