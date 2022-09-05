@@ -51,7 +51,7 @@ class Login extends \Core\Controller
 		
 			Flash::addMessage('Login unsuccessful, please try again', Flash::WARNING);
 		
-			View::renderTemplate('login/new.html' , [
+			View::renderTemplate('Login/new.html' , [
 			'email' => $_POST['email'],
 			'remember_me' => $remember_me]);
 			
@@ -68,7 +68,7 @@ class Login extends \Core\Controller
 	
 		Auth::logout();
 		
-		$this->redirect('/login/show-logout-message');
+		$this->redirect('/Login/show-logout-message');
 	}
 	
 	/**

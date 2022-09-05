@@ -118,9 +118,9 @@ class Category extends Authenticated{
 		$category = new MoneyFlowCategory;
 		if	($category->update($_POST)){
 		Flash::addMessage('Changes saved');
-		$this->redirect('/category/show-'.$_POST['type']);
+		$this->redirect('/Category/show-'.$_POST['type']);
 		} else {
-		View::renderTemplate('category/rename.html', [
+		View::renderTemplate('Category/rename.html', [
 			'type'	=>	$_POST['type'],
 			'name'	=>	$_POST['name'],
 			'id'	=>	$_POST['id']
@@ -137,7 +137,7 @@ class Category extends Authenticated{
 		$type = $_GET['type'];
 		$name = $_GET['name'];
 		$id = MoneyFlowCategory::findIdByName($name , $type)->id;
-		View::renderTemplate('category/confirm_delete.html', [
+		View::renderTemplate('Category/confirm_delete.html', [
 			'type'	=>	$type,
 			'name'	=>	$name,
 			'id'	=>	$id
@@ -156,6 +156,6 @@ class Category extends Authenticated{
 		} else {
 			Flash::addMessage('Operation unsuccessful' , Flash::WARNING);
 		}
-		$this->redirect('/category/show-'.$category->type);
+		$this->redirect('/Category/show-'.$category->type);
 	}
 }
