@@ -1,3 +1,8 @@
 vendor
 /public/img
 composer.lock
+.htaccess
+/logs
+project_NPPP
+/temp
+nginx-configuration.txt

@@ -1,8 +1,0 @@
-[02-Sep-2022 08:36:11 Europe/Berlin] Uncaught exception: 'Exception' with message 'No route matched.'
-Stack trace: #0 C:\xampp\htdocs\phpmvc\public\index.php(47): Core\Router->dispatch('favicon.ico')
-#1 {main}
-Thrown in 'C:\xampp\htdocs\phpmvc\Core\Router.php' on line 130
-[02-Sep-2022 08:36:42 Europe/Berlin] Uncaught exception: 'Exception' with message 'Controller class App\Controllers\Items not found'
-Stack trace: #0 C:\xampp\htdocs\phpmvc\public\index.php(47): Core\Router->dispatch('items/show')
-#1 {main}
-Thrown in 'C:\xampp\htdocs\phpmvc\Core\Router.php' on line 127
