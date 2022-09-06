@@ -1,4 +1,8 @@
+<<<<<<< Updated upstream
 # Welcome to the PHP MVC framework
+=======
+# Home budget
+>>>>>>> Stashed changes
 
 This is a simple MVC framework for building web applications in PHP. It's free and [open-source](LICENSE).
 
