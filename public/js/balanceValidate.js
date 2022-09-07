@@ -42,6 +42,12 @@ $(document).ready(function(){
 		$("#formItem").validate().element("#eDate");
 	});
 	
+	$( "#period" ).change(function() {
+		startDateValue = $('#sDate').val();
+		endDateValue = $('#eDate').val();
+		$("#formItem").validate().element("#eDate");
+	});
+	
 	$.validator.addMethod("endDate", function(value, element){
 		if(startDateValue.length === 0) return true;
 		if(endDateValue.length === 0) return true;
