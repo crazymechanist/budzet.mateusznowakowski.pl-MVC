@@ -1,7 +1,14 @@
 {% extends "base.html" %}
 {% block footer %}	
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script type="text/javascript"></script>
+<script type="text/javascript">
+	$( document ).ready(function() {
+		var pathname = $(location).attr('pathname');
+		
+		$('#menuShowBalance').removeClass('text-dark');
+		$('#menuShowBalance').addClass('text-secondary');
+	});
+</script>
 
 <script>
 	const dataExpense = {
@@ -85,10 +92,10 @@
 	}
 	
 	if (dataIncome.datasets[0].data.length != 0) {
-	const incomeChart = new Chart(
-    document.getElementById('chartIncome'),
-    configIn
-	);
+		const incomeChart = new Chart(
+		document.getElementById('chartIncome'),
+		configIn
+		);
 	}
 	
 </script>
@@ -119,104 +126,105 @@
 		<div class="col-xl-4 col-0">
 		</div>
 		<div class="col">
-			<label for="inputDate">Start date:</label>
-			<input type="date"  id="sDate" name="sDate" class="form-control" value="{{ filters.sDate}}" />
+		<label for="inputDate">Start date:</label>
+		<input type="date"  id="sDate" name="sDate" class="form-control" value="{{ filters.sDate}}" />
 		</div>
 		<div class="col">
-			<label for="inputDate">End date:</label>
-			<input type="date"  id="eDate" name="eDate" class="form-control" value="{{ filters.eDate}}" />
+		<label for="inputDate">End date:</label>
+		<input type="date"  id="eDate" name="eDate" class="form-control" value="{{ filters.eDate}}" />
 		</div>
-	</div>
-	<div class="row my-2">
+		</div>
+		<div class="row my-2">
 		<div class="col-1">
 		</div>
 		<div class="col-2">
-			<label for="sort">Sort:</label>
+		<label for="sort">Sort:</label>
 		</div>
 		<div class="col-9">
-			<select name="sort" id="sort" class="form-control">
-				{% if filters.sort is not empty %}<option value="{{ filters.sort }}"> {{ filters.sortDescTypes[filters.sort] }} </option>{% endif %}
-				{% for short in filters.sortShortTypes %}
-				{% if  filters.sort  != short %}
-				<option value="{{ short }}"> {{ filters.sortDescTypes[short] }} </option>
-				{% endif %}
-				{% endfor %}
-			</select>
+		<select name="sort" id="sort" class="form-control">
+		{% if filters.sort is not empty %}<option value="{{ filters.sort }}"> {{ filters.sortDescTypes[filters.sort] }} </option>{% endif %}
+		{% for short in filters.sortShortTypes %}
+		{% if  filters.sort  != short %}
+		<option value="{{ short }}"> {{ filters.sortDescTypes[short] }} </option>
+		{% endif %}
+		{% endfor %}
+		</select>
 		</div>
-	</div>
-	<div class="row my-2">
+		</div>
+		<div class="row my-2">
 		<div class="col-1">
 		</div>
 		<div class="col-2">
-			<label for="page">Items:</label>
+		<label for="page">Items:</label>
 		</div>
 		<div class="col-9">
-			<select name="page" id="page" class="form-control">
-				{% if filters.page is not empty %}<option value="{{ filters.page }}"> {{ (filters.page-1)*20+1 }}-{{ filters.page*20 }} </option>{% endif %}
-				{% for i in 1..pages %}
-				{% if  i  != filters.page %}
-				<option value="{{ i }}">	{{ (i-1)*20+1 }}-{{ i*20 }}	</option>
-				{% endif %}
-				{% endfor %}
-			</select>
+		<select name="page" id="page" class="form-control">
+		{% if filters.page is not empty %}<option value="{{ filters.page }}"> {{ (filters.page-1)*20+1 }}-{{ filters.page*20 }} </option>{% endif %}
+		{% for i in 1..pages %}
+		{% if  i  != filters.page %}
+		<option value="{{ i }}">	{{ (i-1)*20+1 }}-{{ i*20 }}	</option>
+		{% endif %}
+		{% endfor %}
+		</select>
 		</div>
-	</div>
-	<div class="row justify-content-end">
+		</div>
+		<div class="row justify-content-end">
 		<div class="col-3">
-			<button type="submit" class="btn btn-outline-dark col-12">Go</button>
+		<button type="submit" class="btn btn-outline-dark col-12">Go</button>
 		</div>
 		<div class="col-3">
-			<a class="col-12 btn btn-dark" href="\item\show?page={{ filters.page }}&sort={{ filters.sort }}" >Clear</a>
+		<a class="col-12 btn btn-dark" href="\item\show?page={{ filters.page }}&sort={{ filters.sort }}" >Clear</a>
 		</div>
-	</div>
-	
-</form>
-
-
-<div class="row mt-5">
-	<div class="col-lg-5 col-12 list-group ">
+		</div>
+		
+		</form>
+		
+		
+		<div class="row mt-5">
+		<div class="col-lg-5 col-12 list-group ">
 		{% if moneyFlows is not empty %}
 		{% for moneyFlow in moneyFlows %}
 		<div class="col-12 list-group-item list-group-item-action " aria-current="true">
-			<div class="row d-flex">
-				<div class="col-2">
-					<svg class="bi d-block {{ moneyFlow.type }}" width="32" height="32"><use xlink:href="#graph-{{ moneyFlow.type }}"/></svg>
-				</div>
-				<div class="col-6 col-sm-7">
-					<h6 class="mb-0">{{ moneyFlow.name }}</h6>
-					<p class="mb-0 opacity-75">Category: {{ moneyFlow.category }}</p>
-					<p class="mb-0 opacity-75 h6">Amount: {{ moneyFlow.amount }} PLN</p>
-					<p class="mb-0 opacity-75">Description</p>
-					
-				</div>
-				<div class="col-4 col-sm-3">
-					<small class="opacity-50 text-nowrap">{{ moneyFlow.date }}</small>
-					<div>
-						<form method="get" action="/item/edit" id="formItem">
-							<input type="hidden" id="id" name="id" value="{{ moneyFlow.id }}">
-							<button type="submit" class="btn btn-default my-1 mx-3"><svg class="bi d-block my-1 flex-shrink-0" width="20" height="20"><use xlink:href="#edit"/></svg></button>
-						</form>
-						<form method="get" action="/item/confirm-delete" id="formItem">
-							<input type="hidden" id="id" name="id" value="{{ moneyFlow.id }}">
-							<button type="submit" class="btn btn-default my-1 mx-3"><svg class="bi d-block my-1 flex-shrink-0" width="20" height="20"><use xlink:href="#trash"/></svg></button>
-						</form>
-					</div>
-				</div>
-				
-			</div>
+		<div class="row d-flex">
+		<div class="col-2">
+		<svg class="bi d-block {{ moneyFlow.type }}" width="32" height="32"><use xlink:href="#graph-{{ moneyFlow.type }}"/></svg>
+		</div>
+		<div class="col-6 col-sm-7">
+		<h6 class="mb-0">{{ moneyFlow.name }}</h6>
+		<p class="mb-0 opacity-75">Category: {{ moneyFlow.category }}</p>
+		<p class="mb-0 opacity-75 h6">Amount: {{ moneyFlow.amount }} PLN</p>
+		<p class="mb-0 opacity-75">Description</p>
+		
+		</div>
+		<div class="col-4 col-sm-3">
+		<small class="opacity-50 text-nowrap">{{ moneyFlow.date }}</small>
+		<div>
+		<form method="get" action="/item/edit" id="formItem">
+		<input type="hidden" id="id" name="id" value="{{ moneyFlow.id }}">
+		<button type="submit" class="btn btn-default my-1 mx-3"><svg class="bi d-block my-1 flex-shrink-0" width="20" height="20"><use xlink:href="#edit"/></svg></button>
+		</form>
+		<form method="get" action="/item/confirm-delete" id="formItem">
+		<input type="hidden" id="id" name="id" value="{{ moneyFlow.id }}">
+		<button type="submit" class="btn btn-default my-1 mx-3"><svg class="bi d-block my-1 flex-shrink-0" width="20" height="20"><use xlink:href="#trash"/></svg></button>
+		</form>
+		</div>
+		</div>
+		
+		</div>
 		</div>
 		{% endfor %}
 		{% endif %}
-	</div>
-	<div class="col-lg-7 col-12">
+		</div>
+		<div class="col-lg-7 col-12">
 		<div>
-			<canvas id="chartExpense"></canvas>
+		<canvas id="chartExpense"></canvas>
 		</div>
 		<div>
-			<canvas id="chartIncome"></canvas>
+		<canvas id="chartIncome"></canvas>
 		</div>
-	</div>
-</div>
-</div>
-
-{% endblock %}
+		</div>
+		</div>
+		</div>
+		
+		{% endblock %}
+				

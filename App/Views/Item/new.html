@@ -24,6 +24,21 @@
 	}
 </script>
 
+<script type="text/javascript">
+	$( document ).ready(function() {
+		var pathname = $(location).attr('pathname');
+
+		if (pathname == '/item/new-expense'){
+			$('#menuNewExpense').removeClass('text-dark');
+			$('#menuNewExpense').addClass('text-secondary');
+			}
+		if (pathname == '/item/new-income'){
+			$('#menuNewIncome').removeClass('text-dark');
+			$('#menuNewIncome').addClass('text-secondary');
+			}
+	});
+</script>
+
 <script src="/js/moneyFlowValidate.js"></script>
 
 {% endblock %}

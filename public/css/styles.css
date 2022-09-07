@@ -20,11 +20,16 @@ label.error{
 }
 
 .expense {
-	fill: red;
+	fill: red !important;
 }
 
 .income {
-	fill: green;
+	fill: green !important;
+}
+
+.bi {
+  vertical-align: -.125em;
+  fill: currentColor;
 }
 
 .btn-default {
