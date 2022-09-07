@@ -2,6 +2,23 @@
 
 {% block title %}Category show{% endblock %}
 
+{% block footer %}
+<script type="text/javascript">
+	$( document ).ready(function() {
+		var pathname = $(location).attr('pathname');
+
+		if (pathname == '/category/show-expense'){
+			$('#menuShowExpenseCat').removeClass('text-dark');
+			$('#menuShowExpenseCat').addClass('text-secondary');
+			}
+		if (pathname == '/category/show-income'){
+			$('#menuShowIncomeCat').removeClass('text-dark');
+			$('#menuShowIncomeCat').addClass('text-secondary');
+			}
+	});
+</script>
+{% endblock %}
+
 {% block body %}
 
 <h1 class="d-none">Category show</h1>

@@ -2,6 +2,18 @@
 
 {% block title %}Home{% endblock %}
 
+{% block footer %}
+<script type="text/javascript">
+	$( document ).ready(function() {
+		var pathname = $(location).attr('pathname');
+		console.log(pathname);
+		
+		$('#menuHome').removeClass('text-dark');
+		$('#menuHome').addClass('text-secondary');
+	});
+</script>
+{% endblock %}
+
 {% block body %}
 
     <h1>Welcome</h1>

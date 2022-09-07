@@ -12,8 +12,7 @@
 		* PHP version 7.0
 	*/
 	class MoneyFlowFilteringSorting extends MoneyFlow{
-		public $chartData;
-	
+
 		public $sortShortTypes = array(
 		"name-asc",
 		"name-desc",
@@ -32,15 +31,6 @@
 		"date-desc"		=>	"Newest to oldest"
 		);
 		
-		public function endDate(){
-			return date("Y-m-d", time());
-		}
-		
-		public function initialDate(){
-			$date = new \DateTime('-30 days');
-			return $date->format('Y-m-d');
-		}
-		
 		/**
 			* Class constructor
 			*
@@ -51,7 +41,7 @@
 		public function __construct($data = []){
 			$this->min='';
 			$this->max='';
-			$this->sort='name-asc';
+			$this->sort='date-desc';
 			$this->sDate='';
 			$this->eDate='';
 			$this->search='';

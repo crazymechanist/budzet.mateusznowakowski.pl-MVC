@@ -6,3 +6,4 @@ composer.lock
 project_NPPP
 /temp
 nginx-configuration.txt
+/App/Config.php

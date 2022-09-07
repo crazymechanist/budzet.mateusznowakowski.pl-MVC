@@ -52,6 +52,16 @@
 			});
 		</script>
 		
+		<script type="text/javascript">
+			$( document ).ready(function() {
+				var pathname = $(location).attr('pathname');
+				console.log(pathname);
+				
+				$('#menuProfile').removeClass('text-dark');
+				$('#menuProfile').addClass('text-secondary');
+			});
+		</script>
+		
 		{% endblock %}
 		
 		{% block body %}
@@ -87,7 +97,7 @@
 					<button type="submit" class="btn btn-outline-dark col-12">Save</button>
 				</div>
 				<div class="col-md-3 col-5">
-				<a href="/profile/show" class="btn btn-dark col-12">Cancel</a>
+					<a href="/profile/show" class="btn btn-dark col-12">Cancel</a>
 				</div>
 			</form>
 		</div>

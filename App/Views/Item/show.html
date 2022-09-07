@@ -1,8 +1,18 @@
 {% extends "base.html" %}
 {% block footer %}	
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script type="text/javascript"></script>
+<script type="text/javascript">
+	$( document ).ready(function() {
+		var pathname = $(location).attr('pathname');
+		
+		$('#menuShowBalance').removeClass('text-dark');
+		$('#menuShowBalance').addClass('text-secondary');
+	});
+</script>
 
+<script src="/js/balanceValidate.js"></script>
+<script src="/js/period.js"></script>
+	
 <script>
 	const dataExpense = {
 		labels: [
@@ -85,10 +95,10 @@
 	}
 	
 	if (dataIncome.datasets[0].data.length != 0) {
-	const incomeChart = new Chart(
-    document.getElementById('chartIncome'),
-    configIn
-	);
+		const incomeChart = new Chart(
+		document.getElementById('chartIncome'),
+		configIn
+		);
 	}
 	
 </script>
@@ -100,41 +110,40 @@
 {% block body %}
 
 <h1 class="d-none">Item show</h1>
-{{ exp }}
 
 <form method="get" action="/item/show" id="formItem">
 	<div class="col-12">
-		<label for="inputAmount">Search</label>
-		<input id="inputAmount" name="search" type="text" class="form-control" value="{{ filters.search}}"/>
+		<label for="search">Search</label>
+		<input id="search" name="search" type="text" class="form-control" value="{{ filters.search}}"/>
 	</div>
 	<div class="row">
-		<div class="col">
-			<label for="inputAmount">Min amount [PLN]:</label>
-			<input id="inputAmount" name="min" type="number" step="0.01" min="0" class="form-control"  value="{{ filters.min}}" />
+		<div class="col-xl-2 col-6">
+			<label for="inputMinAmount">Min amount [PLN]:</label>
+			<input id="inputMinAmount" name="min" type="number" step="0.01" min="0" class="form-control"  value="{{ filters.min}}" />
 		</div>
-		<div class="col">
-			<label for="inputAmount">Max amount [PLN]:</label>
-			<input id="inputAmount" name="max" type="number" step="0.01" min="0" class="form-control"  value="{{ filters.max}}" />
+		<div class="col-xl-2 col-6">
+			<label for="inputMaxAmount">Max amount [PLN]:</label>
+			<input id="inputMaxAmount" name="max" type="number" step="0.01" min="0" class="form-control"  value="{{ filters.max}}" />
 		</div>
 		<div class="col-xl-4 col-0">
 		</div>
-		<div class="col">
+		<div class="col-xl-2 col-6">
 			<label for="inputDate">Start date:</label>
 			<input type="date"  id="sDate" name="sDate" class="form-control" value="{{ filters.sDate}}" />
 		</div>
-		<div class="col">
+		<div class="col-xl-2 col-6">
 			<label for="inputDate">End date:</label>
 			<input type="date"  id="eDate" name="eDate" class="form-control" value="{{ filters.eDate}}" />
 		</div>
 	</div>
 	<div class="row my-2">
-		<div class="col-1">
+		<div class="col-md-2 col-12">
 		</div>
-		<div class="col-2">
+		<div class="col-md-2 col-0 text-md-end">
 			<label for="sort">Sort:</label>
 		</div>
-		<div class="col-9">
-			<select name="sort" id="sort" class="form-control">
+		<div class="col-md-8 col-12">
+			<select name="sort" id="sort" class="form-select">
 				{% if filters.sort is not empty %}<option value="{{ filters.sort }}"> {{ filters.sortDescTypes[filters.sort] }} </option>{% endif %}
 				{% for short in filters.sortShortTypes %}
 				{% if  filters.sort  != short %}
@@ -144,14 +153,14 @@
 			</select>
 		</div>
 	</div>
-	<div class="row my-2">
-		<div class="col-1">
+	<div class="row">
+		<div class="col-md-2">
 		</div>
-		<div class="col-2">
+		<div class="col-md-2 text-md-end">
 			<label for="page">Items:</label>
 		</div>
-		<div class="col-9">
-			<select name="page" id="page" class="form-control">
+		<div class="col-md-2">
+			<select name="page" id="page" class="form-select">
 				{% if filters.page is not empty %}<option value="{{ filters.page }}"> {{ (filters.page-1)*20+1 }}-{{ filters.page*20 }} </option>{% endif %}
 				{% for i in 1..pages %}
 				{% if  i  != filters.page %}
@@ -160,13 +169,23 @@
 				{% endfor %}
 			</select>
 		</div>
+		<div class="col-md-3 text-md-end">
+			<label for="period">Period:</label>
+		</div>
+		<div class="col-md-3 mb-3">
+			<select id="period" class="form-select ">
+				<option value="none">----------</option>
+				<option value="this">This month</option>
+				<option value="last">Last month</option>
+			</select>
+		</div>
 	</div>
 	<div class="row justify-content-end">
-		<div class="col-3">
+		<div class="col-md-3 col-6">
 			<button type="submit" class="btn btn-outline-dark col-12">Go</button>
 		</div>
-		<div class="col-3">
-			<a class="col-12 btn btn-dark" href="\item\show?page={{ filters.page }}&sort={{ filters.sort }}" >Clear</a>
+		<div class="col-md-3 col-6">
+			<a id="clear" class="col-12 btn btn-dark" href="\item\show?page={{ filters.page }}&sort={{ filters.sort }}" >Clear</a>
 		</div>
 	</div>
 	
@@ -208,7 +227,8 @@
 		{% endfor %}
 		{% endif %}
 	</div>
-	<div class="col-lg-7 col-12">
+	<div class="col-lg-2 col-12"></div>
+	<div class="col-lg-5 col-12">
 		<div>
 			<canvas id="chartExpense"></canvas>
 		</div>
@@ -217,6 +237,7 @@
 		</div>
 	</div>
 </div>
-</div>
+
+
 
 {% endblock %}
