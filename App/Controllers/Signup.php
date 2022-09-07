@@ -4,6 +4,8 @@ namespace App\Controllers;
 
 use \Core\View;
 use \App\Models\User;
+use \App\Config;
+use \App\Models\MoneyFlowCategory;
 
 /**
  * Signup controller
@@ -31,6 +33,12 @@ class Signup extends \Core\Controller
 		$user = new User($_POST);
 
 		if ($user->save()) {
+			
+			foreach (Config::$initialCategories as $categoryTable) {
+				$category = new MoneyFlowCategory($categoryTable);
+				$user_id =User::findByEmail($user->email)->id;
+				$category -> save($user_id);
+			}
 			
 			$user->sendActivationEmail();
 			

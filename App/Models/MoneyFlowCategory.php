@@ -92,12 +92,12 @@ class MoneyFlowCategory extends \Core\Model{
 	/**
 	 * Add new money flow category
 	 *
-	 * @param array $data Data from the money flow profile form
+	 * @param id (optional) id of user user category should be assigned to
 	 *
 	 * @return boolean True if the data was updated, false otherwise
 	 */
-	public function save(){
-		if	(!$this::findIdByName($this->name , $this->type)){
+	public function save($id = NULL){
+		if	(!$this::findIdByName($this->name , $this->type, $id)){
 			
 			$sql = 'INSERT INTO `money_flows_categories` (`id`, `user_id`, `type`, `name`) 
 			VALUES (NULL, :id_user , :type , :name)';
@@ -106,7 +106,12 @@ class MoneyFlowCategory extends \Core\Model{
 			$stmt = $db->prepare($sql);
 												  
 			$stmt->bindValue(':name', $this->name, PDO::PARAM_STR);
-			$stmt->bindValue(':id_user', $_SESSION['user_id'] , PDO::PARAM_INT);
+			if($id == NULL){
+				$stmt->bindValue(':id_user', $_SESSION['user_id'] , PDO::PARAM_INT);
+			}else{
+				$stmt->bindValue(':id_user', $id , PDO::PARAM_INT);
+			}
+			
 			$stmt->bindParam(':type', $this->type, PDO::PARAM_STR);
 			
 			return $stmt->execute();
@@ -140,7 +145,7 @@ class MoneyFlowCategory extends \Core\Model{
 	*
 	* @return mixed MoneyFlow if found, false otherwise
 	*/
-	public static function findIdByName($name , $type='')	{
+	public static function findIdByName($name , $type=NULL, $id= NULL)	{
 		$sql = 'SELECT *
 				FROM money_flows_categories
 				WHERE 	name		=	:name
@@ -151,10 +156,15 @@ class MoneyFlowCategory extends \Core\Model{
 		$db = static::getDB();
 		$stmt = $db->prepare($sql);
 		$stmt->bindParam(':name', $name, PDO::PARAM_STR);
-		$stmt->bindValue(':user_id', $_SESSION['user_id'] , PDO::PARAM_INT);
 		
-		if($type != ""){
+		if($type != NULL){
 			$stmt->bindParam(':type', $type, PDO::PARAM_STR);
+		}
+		
+		if($id == NULL){
+		$stmt->bindValue(':user_id', $_SESSION['user_id'] , PDO::PARAM_INT);
+		} else {
+		$stmt->bindValue(':user_id', $id , PDO::PARAM_INT);
 		}
 		
 		$stmt->setFetchMode(PDO::FETCH_CLASS, get_called_class());

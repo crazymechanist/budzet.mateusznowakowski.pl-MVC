@@ -1,7 +1,7 @@
-	/**
+/**
 	* Add jQuery Validation of item (money flow) object
 	*
-	*/
+*/
 $(document).ready(function(){
 	
 	$("#formItem").validate({
@@ -9,7 +9,8 @@ $(document).ready(function(){
 			name: "required",
 			date: {
 				required: true,
-				dateISO: true
+				dateISO: true,
+				dateRange: true
 			},
 			category: {
 				required: true,
@@ -27,4 +28,19 @@ $(document).ready(function(){
 			}
 		}
 	});
-});
+	
+	var fromDate = new Date("2000-01-01");
+	var toDate = new Date("2030-12-31");
+	
+	$.validator.addMethod('dateRange',
+		function(value, element, param) {
+			var date = new Date(value);
+			if(value, element, param) {
+				if(date >= fromDate && date <= toDate) return true;
+			}
+			return false;
+		},
+		'Date must be from ' + fromDate.toISOString().split('T')[0] + ' to ' + toDate.toISOString().split('T')[0]
+	);
+	
+});	

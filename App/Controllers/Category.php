@@ -5,8 +5,8 @@ namespace App\Controllers;
 use \App\Models\MoneyFlow;
 use \App\Models\MoneyFlowCategory;
 use \Core\View;
-use App\Flash;
-use App\Controllers\Authenticated;
+use \App\Flash;
+use \App\Controllers\Authenticated;
 
 /**
  * Category controller

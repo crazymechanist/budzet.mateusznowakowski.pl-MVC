@@ -15,7 +15,7 @@ label.error{
 	color: #ff0000;
 }
 
-#inputAmount-error{
+#inputAmount-error , #inputDate-error , #eDate-error , #inputMaxAmount-error{
 	margin-left:10px;
 }
 
