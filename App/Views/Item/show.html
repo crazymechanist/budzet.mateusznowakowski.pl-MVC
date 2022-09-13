@@ -1,10 +1,10 @@
 {% extends "base.html" %}
-{% block footer %}	
+{% block footer %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script type="text/javascript">
 	$( document ).ready(function() {
 		var pathname = $(location).attr('pathname');
-		
+
 		$('#menuShowBalance').removeClass('text-dark');
 		$('#menuShowBalance').addClass('text-secondary');
 	});
@@ -12,7 +12,7 @@
 
 <script src="/js/balanceValidate.js"></script>
 <script src="/js/period.js"></script>
-	
+
 <script>
 	const dataExpense = {
 		labels: [
@@ -24,7 +24,7 @@
 		],
 		datasets: [{
 			label: 'Expenses',
-			data: [		
+			data: [
 			{% for data in chartData %}
 			{% if data.type == 'expense' %}
 			'{{ data.sum }}',
@@ -45,7 +45,7 @@
 			hoverOffset: 4
 		}]
 	};
-	
+
 	const dataIncome = {
 		labels: [
 		{% for data in chartData %}
@@ -57,7 +57,7 @@
 		],
 		datasets: [{
 			label: 'Incomes',
-			data: [		
+			data: [
 			{% for data in chartData %}
 			{% if data.type == 'income' %}
 			'{{ data.sum }}',
@@ -76,31 +76,31 @@
 			hoverOffset: 4
 		}]
 	};
-	
+
 	const configEx = {
 		type: 'pie',
 		data: dataExpense,
 	};
-	
+
 	const configIn = {
 		type: 'pie',
 		data: dataIncome,
 	};
-	
+
 	if (dataExpense.datasets[0].data.length != 0) {
 		const expenseChart = new Chart(
 		document.getElementById('chartExpense'),
 		configEx
 		);
 	}
-	
+
 	if (dataIncome.datasets[0].data.length != 0) {
 		const incomeChart = new Chart(
 		document.getElementById('chartIncome'),
 		configIn
 		);
 	}
-	
+
 </script>
 
 {% endblock %}
@@ -188,7 +188,7 @@
 			<a id="clear" class="col-12 btn btn-dark" href="\item\show?page={{ filters.page }}&sort={{ filters.sort }}" >Clear</a>
 		</div>
 	</div>
-	
+
 </form>
 
 
@@ -205,8 +205,8 @@
 					<h6 class="mb-0">{{ moneyFlow.name }}</h6>
 					<p class="mb-0 opacity-75">Category: {{ moneyFlow.category }}</p>
 					<p class="mb-0 opacity-75 h6">Amount: {{ moneyFlow.amount }} PLN</p>
-					<p class="mb-0 opacity-75">Description</p>
-					
+					<p class="mb-0 opacity-75">Description: {{ moneyFlow.description }}</p>
+
 				</div>
 				<div class="col-4 col-sm-3">
 					<small class="opacity-50 text-nowrap">{{ moneyFlow.date }}</small>
@@ -221,7 +221,7 @@
 						</form>
 					</div>
 				</div>
-				
+
 			</div>
 		</div>
 		{% endfor %}

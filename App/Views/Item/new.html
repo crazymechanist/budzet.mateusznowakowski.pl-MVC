@@ -9,17 +9,17 @@
 		var dd = today.getDate();
 		var mm = today.getMonth()+1; //January is 0!
 		var yyyy = today.getFullYear();
-		
+
 		if(dd<10) {
 			dd = '0'+dd
-		} 
-		
+		}
+
 		if(mm<10) {
 			mm = '0'+mm
-		} 
-		
+		}
+
 		today = yyyy + '-' + mm + '-' + dd;
-		
+
 		{% if moneyFlow.date is  empty %}document.getElementById("inputDate").defaultValue = today;{% endif %}
 	}
 </script>
@@ -61,33 +61,33 @@
 
 
 <form method="post" action="/item/create" id="formItem">
-	
+
 	<div class="form-group my-2">
 		<label for="inputName">Name</label>
-		<input id="inputName" name="name" placeholder="Name" autofocus required class="form-control" 
+		<input id="inputName" name="name" placeholder="Name" autofocus required class="form-control"
 		{% if moneyFlow.name is not empty %}
 		value= "{{ moneyFlow.name }}"
-		{% else %} 
-		{% if type == 'expense' %} 
-		value="Expense" 
-		{% else %} 
-		value="Income" 
+		{% else %}
+		{% if type == 'expense' %}
+		value="Expense"
+		{% else %}
+		value="Income"
 		{% endif %}
 		{% endif %}/>
 	</div>
-	
+
 	<div>
 		<input type="hidden" id="type" name="type" value="{{ type }}">
 	</div>
 	<div class="form-group my-2">
 		<label for="inputCategory">Category:</label>
-		
+
 		<select name="category" id="inputCategory" class="form-select">
 			{% if moneyFlow.category is not empty %}<option> {{ moneyFlow.category }} </option>{% endif %}
 			{% if categories is empty %}<option> Please add any category </option>{% endif %}
 			{% for category in categories %}
-			{% if category != moneyFlow.category %}
-			<option>{{ category }}</option>
+			{% if category.name != moneyFlow.category %}
+			<option>{{ category.name }}</option>
 			{% endif %}
 			{% endfor %}
 		</select>
@@ -97,7 +97,7 @@
 		<input id="inputAmount" name="amount" type="number"
 		{% if moneyFlow.amount is not empty %}
 		value= "{{ moneyFlow.amount }}"
-		{% else %} 
+		{% else %}
 		value="0.0"
 		{% endif %}
 		step="0.01" min="0" class="form-control" />
@@ -105,16 +105,16 @@
 	<div class="form-group col-3 my-2">
 		<label for="inputDate">Date:</label>
 		<input type="date"  id="inputDate" name="date" value="{{ moneyFlow.date }}" class="form-control" />
-		
+
 	</div>
 	<div class="form-group my-2">
 		<label for="name">Description:</label>
 		<input type="text" id="inputDescription" name="description" value="{{ moneyFlow.description }}" maxlength="280" class="form-control">
 	</div>
-	
+
 	<button type="submit" class="btn btn-outline-dark my-2 col-3">Create</button>
 	<a class="col-3 btn btn-dark" href="\item\show" >Cancel</a>
-	
+
 </form>
 
 {% endblock %}
