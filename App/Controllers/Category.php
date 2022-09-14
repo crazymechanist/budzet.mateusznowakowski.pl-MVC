@@ -9,18 +9,18 @@ use \App\Flash;
 use \App\Controllers\Authenticated;
 
 /**
- * Category controller
- *
- * PHP version 7.0
- */
+* Category controller
+*
+* PHP version 7.0
+*/
 
 class Category extends Authenticated{
 
 	/**
-	 * Exclude function from required authentication
-	 *
-	 * @return void
-	 */
+	* Exclude function from required authentication
+	*
+	* @return void
+	*/
 	public function __call($name, $args){
 		$method = $name . 'Action';
 
@@ -34,12 +34,12 @@ class Category extends Authenticated{
 	}
 
 	/**
-	 * Validate if email is available (AJAX) for a new signup.
-	 *
-	 * @return void
-	 */
+	* Validate if email is available (AJAX) for a new signup.
+	*
+	* @return void
+	*/
 	public function validateCategoryAction(){
-		 $is_valid = false;
+		$is_valid = false;
 		if(MoneyFlowCategory::findIdByName($_GET['category'] ?? null)){
 			$is_valid = true;
 		}
@@ -49,10 +49,10 @@ class Category extends Authenticated{
 	}
 
 	/**
-	 * Show, edit and delete expense categories
-	 *
-	 * @return void
-	 */
+	* Show, edit and delete expense categories
+	*
+	* @return void
+	*/
 	public function showExpenseAction(){
 		$type = "expense";
 		$categories = MoneyFlowCategory::returnAll($type);
@@ -64,10 +64,10 @@ class Category extends Authenticated{
 	}
 
 	/**
-	 * Show income categories
-	 *
-	 * @return void
-	 */
+	* Show income categories
+	*
+	* @return void
+	*/
 	public function showIncomeAction(){
 		$type = "income";
 		$categories = MoneyFlowCategory::returnAll($type);
@@ -79,10 +79,10 @@ class Category extends Authenticated{
 	}
 
 	/**
-	 * New category
-	 *
-	 * @return void
-	 */
+	* New category
+	*
+	* @return void
+	*/
 	public function newAction(){
 		$category = new MoneyFlowCategory($_POST);
 		if($category->save()){
@@ -94,10 +94,10 @@ class Category extends Authenticated{
 	}
 
 	/**
-	 * Edit category
-	 *
-	 * @return void
-	 */
+	* Edit category
+	*
+	* @return void
+	*/
 	public function renameAction(){
 		$name = $_GET['name'];
 		$type = $_GET['type'];
@@ -110,29 +110,29 @@ class Category extends Authenticated{
 	}
 
 	/**
-	 * Update category
-	 *
-	 * @return void
-	 */
+	* Update category
+	*
+	* @return void
+	*/
 	public function updateAction(){
 		$category = new MoneyFlowCategory;
 		if	($category->update($_POST)){
-		Flash::addMessage('Changes saved');
-		$this->redirect('/Category/show-'.$_POST['type']);
+			Flash::addMessage('Changes saved');
+			$this->redirect('/Category/show-'.$_POST['type']);
 		} else {
-		View::renderTemplate('Category/rename.html', [
-			'type'	=>	$_POST['type'],
-			'name'	=>	$_POST['name'],
-			'id'	=>	$_POST['id']
-		]);
+			View::renderTemplate('Category/rename.html', [
+				'type'	=>	$_POST['type'],
+				'name'	=>	$_POST['name'],
+				'id'	=>	$_POST['id']
+			]);
 		}
 	}
 
 	/**
-	 * Confirm delete money flow
-	 *
-	 * @return void
-	 */
+	* Confirm delete money flow
+	*
+	* @return void
+	*/
 	public function confirmDeleteAction(){
 		$type = $_GET['type'];
 		$name = $_GET['name'];
@@ -145,10 +145,10 @@ class Category extends Authenticated{
 	}
 
 	/**
-	 * Delete money flow
-	 *
-	 * @return void
-	 */
+	* Delete money flow
+	*
+	* @return void
+	*/
 	public function deleteAction(){
 		$category = new MoneyFlowCategory($_POST);
 		if($category->delete($category->id)){
@@ -159,23 +159,32 @@ class Category extends Authenticated{
 		$this->redirect('/Category/show-'.$category->type);
 	}
 
-  /**
-	 * Write out categories
-	 *
-	 * @return void
-	 */
-	// public function listAction(){
-	// 	$categories = MoneyFlowCategory::returnLimits();
-  //   header('Content-Type: application/json', true, 200);
-  //   echo json_encode($categories);
-	// }
+	/**
+	* Write out categories witch limit is set
+	*
+	* @return void
+	*/
 	public function listAction(){
 		$sDate = $this->route_params['sdate'];
 		$eDate = $this->route_params['edate'];
 
 		$categories = MoneyFlowCategory:: returnLimitsPeriod($sDate,$eDate);
-    header('Content-Type: application/json', true, 200);
-    echo json_encode($categories);
+		header('Content-Type: application/json', true, 200);
+		echo json_encode($categories);
+	}
+
+	/**
+	* Change limit
+	*
+	* @return void
+	*/
+	public function changeLimitAction(){
+		$name = $this->route_params['name'];
+		$type = $this->route_params['type'];
+		$limit = $this->route_params['limit'];
+		$result = MoneyFlowCategory:: addLimit($name , $type , $limit);
+		header('Content-Type: application/json', true, 201);
+		echo json_encode($result);
 	}
 
 }

@@ -1,3 +1,4 @@
+const origin = document.location.origin;
 let elLimitSet = document.getElementById("limitSet");
 let elLimitNotSet = document.getElementById("limitNotSet");
 let switchCategory = document.getElementById("inputCategory");
@@ -5,8 +6,15 @@ let switchDate = document.getElementById("inputDate");
 let inputAmount = document.getElementById("inputAmount");
 let hideInput = document.getElementById("type");
 let createButton = document.getElementById("createButton");
-let arr = [];
-let arrName = [];
+let changeButton = document.getElementById("limitSetBtn");
+let addButton = document.getElementById("limitNotSet");
+let modalTitle = document.getElementById("limitModalLabel");
+let inputLimit = document.getElementById("inputLimit");
+let limitSave = document.getElementById("limitSave");
+let limitErase = document.getElementById("eraseLimit");
+let limitAlert = document.getElementById("limitAlert");
+var arr = [];
+var arrName = [];
 let error = '';
 let leftToSpend =0;
 
@@ -33,6 +41,47 @@ inputAmount.onchange = function() {
   createButton.disabled = false;
   showLimitDialog();
 }
+
+addButton.onclick  = function(){
+  modalTitle.innerHTML = "Add limit";
+  inputLimit.value = 0;
+}
+
+changeButton.onclick  = function(){
+  let a = switchCategory.value;
+  let index = arrName.indexOf(a);
+  modalTitle.innerHTML = "Change limit";
+  if (index != -1) inputLimit.value = arr[index].limit;
+}
+
+inputLimit.onchange = function() {
+  limitSave.disabled = false;
+  let val = inputLimit.value;
+  if(val < 0 || typeof(val)=='number' || isNaN(val) ) limitSave.disabled = true;
+}
+
+limitSave.onclick  = async function(){
+  let result = await setLimit();
+  let date = switchDate.value;
+  await assing(date);
+  await showMessage(result);
+  await showLimitDialog();
+}
+
+limitErase.onclick  = async function(){
+  let result = await setLimit(true);
+  let date = switchDate.value;
+  await assing(date);
+  await showMessage(result);
+  await showLimitDialog();
+}
+
+$('#limitModal').on('hide.bs.modal', function () {
+  limitAlert.classList.remove("d-block");
+  limitAlert.classList.add("d-none");
+  limitAlert.classList.remove("alert-success");
+  limitAlert.classList.remove("alert-danger");
+})
 
 function getYYYYMMDDstring(d , type='') {
   let date = new Date(d);
@@ -84,7 +133,7 @@ async function getArr(date){
   let sDate = await getYYYYMMDDstring(date , type='first');
   let eDate = await getYYYYMMDDstring(date , type='last');
   try{
-    let res = await fetch(`http://localhost/api/categories/${sDate}and${eDate}`);
+    let res = await fetch(origin+`/api/categories/${sDate}and${eDate}`);
       return await res.json();
     } catch (e) {
       console.log("ERROR",e);
@@ -92,47 +141,76 @@ async function getArr(date){
     }
   }
 
-  function assignNames(item, i){
-    arrName[i] = item.name;
-  }
-
-  async function assing(date){
-    try{
-      arr = await getArr(date);
-      arr.forEach(assignNames);
-    } catch (e) {
-      console.log("ERROR",e);
-      error = e;
+  async function setLimit(shouldErase=false){
+    let name = await switchCategory.value;
+    let type = await hideInput.value;
+    let limit = await inputLimit.value;
+    if (shouldErase){
+      limit = 'NULL';
     }
-  }
+    try{
+      let res = await fetch(origin+`/api/change-limit/${name};;;andtype;;;${type};;;andlimit;;;${limit}`);
+        return await res.json();
+      } catch (e) {
+        console.log("ERROR",e);
+      }
+    }
 
-  function showLimitDialog(){
-    const type = hideInput.value;
-    let category = switchCategory.value;
-    let index = arrName.indexOf(category);
-    if(type.includes('expense')
-    && arrName.length !== 0){
-      if (index !== -1){
-        leftToSpend = arr[index].limit-arr[index].sum-inputAmount.value;
-        let text = `The limit was set to ${arr[index].limit}`;
-        if(leftToSpend>=0){
-          text += `, there are ${leftToSpend.toFixed(2)} left to spend.`;
+    function assignNames(item, i){
+      arrName[i] = item.name;
+    }
+
+    async function assing(date){
+      try{
+        arr = await getArr(date);
+        arrName = [];
+        arr.forEach(assignNames);
+      } catch (e) {
+        console.log("ERROR",e);
+        error = e;
+      }
+    }
+
+    function showLimitDialog(){
+      const type = hideInput.value;
+      let category = switchCategory.value;
+      let index = arrName.indexOf(category);
+      if(type.includes('expense')
+      && arrName.length !== 0){
+        if (index !== -1){
+          leftToSpend = arr[index].limit-arr[index].sum-inputAmount.value;
+          let text = `The limit was set to ${arr[index].limit}`;
+          if(leftToSpend>=0){
+            text += `, there are ${leftToSpend.toFixed(2)} left to spend.`;
+          } else {
+            let debt = -leftToSpend;
+            text += `, there are nothing left to spend. ${debt.toFixed(2)} above limit`;
+            createButton.disabled = true;
+          }
+          document.getElementById("limitText").innerHTML=text;
+          hideLimitAmount();
         } else {
-          let debt = -leftToSpend;
-          text += `, there are nothing left to spend. ${debt.toFixed(2)} above limit`;
-          createButton.disabled = true;
+          showLimitAmount();
         }
-        document.getElementById("limitText").innerHTML=text;
+      }
+      if (error != '') {
+        document.getElementById("limitSet").innerHTML="Error occured!";
         hideLimitAmount();
-      } else {
+      }
+      if (error =='' && arrName.length === 0) {
         showLimitAmount();
       }
     }
-    if (error != '') {
-      document.getElementById("limitSet").innerHTML="Error occured!";
-      hideLimitAmount();
+
+    function showMessage(isSuccess){
+      limitAlert.classList.remove("d-none");
+      limitAlert.classList.add("d-block");
+      if (isSuccess){
+        limitAlert.classList.add("alert-success");
+        limitAlert.innerHTML="Success";
+      } else {
+        limitAlert.classList.add("alert-danger");
+        limitAlert.innerHTML="Error occurs!";
+      }
+
     }
-    if (error =='' && arrName.length === 0) {
-      showLimitAmount();
-    }
-  }

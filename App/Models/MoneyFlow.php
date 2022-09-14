@@ -12,14 +12,14 @@ use \App\Models\MoneyFlowCategory;
 	* PHP version 7.0
 */
 class MoneyFlow extends \Core\Model{
-	
+
 	/**
 	* Error messagesmessages
 	*
 	* @var array
 	*/
 	public $errors = [];
-	
+
 	/**
 	* Class constructor
 	*
@@ -32,7 +32,7 @@ class MoneyFlow extends \Core\Model{
 			$this->$key = $value;
 		};
 	}
-	
+
 	/**
 	* Save money flow
 	*
@@ -40,8 +40,8 @@ class MoneyFlow extends \Core\Model{
 	*/
 	public function save()	{
 		$this->validate();
-		$id=0;
-		if(!($id=$this->saveMoneyFlow())){
+		$id=$this->saveMoneyFlow();
+		if(!$id){
 			$this->error = 'Failed to save';
 			return false;
 		}
@@ -51,7 +51,7 @@ class MoneyFlow extends \Core\Model{
 		}
 		return true;
 	}
-	
+
 	/**
 	* Save in table money flows
 	*
@@ -59,13 +59,13 @@ class MoneyFlow extends \Core\Model{
 	*/
 	public function saveMoneyFlow()	{
 		if (empty($this->errors)) {
-			
+
 			$sql = 'INSERT INTO money_flows (name, type, category_id, amount, date, description)
 			VALUES (:name, :type, :category_id, :amount, :date, :description)';
-			
+
 			$db = static::getDB();
 			$stmt = $db->prepare($sql);
-			
+
 			$stmt->bindValue(':name', $this->name, PDO::PARAM_STR);
 			$stmt->bindValue(':type', $this->type, PDO::PARAM_STR);
 			$category= MoneyFlowCategory::findIdByName($this->category);
@@ -73,8 +73,8 @@ class MoneyFlow extends \Core\Model{
 			$stmt->bindValue(':amount', $this->amount);
 			$stmt->bindValue(':date', $this->date, PDO::PARAM_STR);
 			$stmt->bindValue(':description', $this->description, PDO::PARAM_STR);
-			
-			
+
+
 			if ($stmt->execute()){
 				return $db->lastInsertId();
 			} else {
@@ -83,31 +83,31 @@ class MoneyFlow extends \Core\Model{
 		}
 		return false;
 	}
-	
+
 	/**
 	* Save in table users money flows
 	*
 	* @return boolean  True if the user was assigned, false otherwise
 	*/
 	public function assignMoneyFlow($idMoneyFlow)	{
-		
+
 		if (empty($this->errors)) {
-			
+
 			$sql = 'INSERT INTO users_money_flows (id_user , id_money_flows)
 			VALUES (:id_user, :id_money_flows)';
-			
+
 			$db = static::getDB();
 			$stmt = $db->prepare($sql);
-			
+
 			$stmt->bindValue(':id_user', $_SESSION['user_id'] , PDO::PARAM_INT);
 			$stmt->bindValue(':id_money_flows', $idMoneyFlow , PDO::PARAM_INT);
-			
+
 			return $stmt->execute();
 		}
-		
+
 		return false;
 	}
-	
+
 	/**
 	* Validate current property values, adding valiation error messages to the errors array property
 	*
@@ -118,28 +118,28 @@ class MoneyFlow extends \Core\Model{
 		if ($this->name == '') {
 			$this->errors[] = 'Name is required';
 		}
-		
+
 		// Type
 		if($this->typeValidate($this->type)){
 			$this->errors[] = 'Type can be only expense or income';
 		}
-		
+
 		// Category
 		if(!MoneyFlowCategory::findIdByName($this->category)){
 			$this->errors[] = 'Unknown category';
-		} 
-		
+		}
+
 		// Date
 		if ($this->dateValidate($this->date)) {
 			$this->errors[] = 'Date invalid';
 		}
-		
+
 		//Amount
 		if($this->amountValidate($this->amount)){
 			$this->errors[] = 'Amount invalid';
 		}
 	}
-	
+
 	/**
 	* Validate current type value
 	*
@@ -152,7 +152,7 @@ class MoneyFlow extends \Core\Model{
 		}
 		return true;
 	}
-	
+
 	/**
 	* Validate current date value
 	*
@@ -164,7 +164,7 @@ class MoneyFlow extends \Core\Model{
 		}
 		return true;
 		}
-	
+
 	/**
 	* Validate current amount value
 	*
@@ -176,7 +176,7 @@ class MoneyFlow extends \Core\Model{
 		}
 		return true;
 	}
-	
+
 
 	/**
 	 * Returning all money flows of current user
@@ -187,28 +187,28 @@ class MoneyFlow extends \Core\Model{
 	 */
 	public static function returnMF($id='')	{
 		$sql = 'SELECT		flow.id , flow.name , cat.name AS category, flow.type , date , description, amount, id_user
-		FROM		money_flows				AS		flow 
-		INNER JOIN	money_flows_categories	AS		cat 
+		FROM		money_flows				AS		flow
+		INNER JOIN	money_flows_categories	AS		cat
 		ON			flow.category_id		=		cat.id
 		INNER JOIN	users_money_flows		AS		user_mf
 		ON			flow.id					=		user_mf.id_money_flows
 		WHERE		id_user					=		:id_user';
-		
+
 		if($id != ''){
 			$sql .=	"\nAND	flow.id	=	:id";
 		}
-		
+
 		$db = static::getDB();
 		$stmt = $db->prepare($sql);
-		
+
 		if($id != ''){
 			$stmt->bindValue(':id', $id , PDO::PARAM_INT);
 		}
-		
+
 		$stmt->bindValue(':id_user', $_SESSION['user_id'] , PDO::PARAM_INT);
-		
+
 		$stmt->execute();
-		
+
 		return $stmt->fetchAll(PDO::FETCH_CLASS);
 	}
 
@@ -227,18 +227,18 @@ class MoneyFlow extends \Core\Model{
 		$this->date			=	$data['date'];
 		$this->description	=	$data['description'];
 		$this->id			=	$data['id'];
-		
+
 		$this->validate(false);
-		
+
 		if	(empty($this->errors) && $this->returnMF($this->id)){
-			
-			$sql = 'UPDATE	money_flows 
+
+			$sql = 'UPDATE	money_flows
 					SET		name = :name, category_id = :category_id, amount = :amount, date = :date, description = :description
 					WHERE	id	=	:id';
-											  
+
 			$db = static::getDB();
 			$stmt = $db->prepare($sql);
-												  
+
 			$stmt->bindValue(':name', $this->name, PDO::PARAM_STR);
 			$category= MoneyFlowCategory::findIdByName($this->category);
 			$stmt->bindValue(':category_id', $category->id, PDO::PARAM_INT);
@@ -246,12 +246,12 @@ class MoneyFlow extends \Core\Model{
 			$stmt->bindValue(':date', $this->date, PDO::PARAM_STR);
 			$stmt->bindValue(':description', $this->description, PDO::PARAM_STR);
 			$stmt->bindValue(':id', $this->id, PDO::PARAM_INT);
-			
+
 			return $stmt->execute();
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Delete the money flow
 	 *
@@ -261,22 +261,22 @@ class MoneyFlow extends \Core\Model{
 	 */
 	public function delete($id){
 		if	($this::returnMF($id)){
-			
-			$sql = 'DELETE mf, umf 
-					FROM money_flows AS mf 
+
+			$sql = 'DELETE mf, umf
+					FROM money_flows AS mf
 					INNER JOIN users_money_flows AS umf
 					ON umf.id_money_flows = mf.id
 					WHERE mf.id = :id';
-			
+
 			$db = static::getDB();
 			$stmt = $db->prepare($sql);
-			
+
 			$stmt->bindValue(':id', $id, PDO::PARAM_INT);
-			
+
 			return $stmt->execute();
 		}
 		return false;
 	}
-	
+
 
 }

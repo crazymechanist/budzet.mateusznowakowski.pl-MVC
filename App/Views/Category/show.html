@@ -36,7 +36,9 @@
 				</div>
 				<div class="col-6 col-sm-7">
 					<h6 class="mb-0">{{ category.name }}</h6>
+					{% if type == 'expense' %}
 					<p class="mb-0 opacity-75">Limit: {{ category.month_limit ? category.month_limit : 'no' }}</p>
+					{% endif %}
 				</div>
 				<div class="col-4 col-sm-3">
 					<div>

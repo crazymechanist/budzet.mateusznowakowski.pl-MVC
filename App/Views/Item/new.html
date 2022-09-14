@@ -16,6 +16,7 @@
 
 <script type="text/javascript">
 	$( document ).ready(function() {
+
 		var pathname = $(location).attr('pathname');
 
 		if (pathname == '/item/new-expense'){
@@ -37,6 +38,33 @@
 {% block body %}
 
 <h1 class="d-none">New {{ type }}</h1>
+
+<!-- Modal -->
+<div class="modal fade" id="limitModal" tabindex="-1" aria-labelledby="limitModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="limitModalLabel">Add/ change limit</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<div class="d-none alert" role="alert" id="limitAlert">
+					<!-- Alert text -->
+				</div>
+				<label for="inputLimit">Limit [PLN]:</label>
+				<div class="input-group mb-3">
+					<input id="inputLimit" name="limit" type="number" step="0.01" min="0" class="form-control" aria-label="Limit amount"/>
+					<button class="btn btn-outline-dark" type="button" id="eraseLimit"><svg class="bi d-block my-1 flex-shrink-0" width="20" height="20"><use xlink:href="#trash"/></svg></button>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-dark" data-bs-dismiss="modal">Close</button>
+				<button type="button" id="limitSave" class="btn btn-outline-dark">Save changes</button>
+			</div>
+		</div>
+	</div>
+</div>
+
 
 {% if moneyFlow.errors is not empty %}
 <p>Errors:</p>
@@ -91,8 +119,8 @@
 			{% endif %}
 			step="0.01" min="0" class="form-control" />
 		</div>
-		<div class="d-none mx-2 col-5 col-sm-7" id="limitSet"><span id="limitText">The limit was set to xxx, there are xxx left to spend. </span><button class="btn btn-link" type="button" style="padding-top: 0px;padding-left: 4px;">Change limit</button></div>
-		<div class="d-none mx-2 col-4 col-md-2 btn btn-outline-secondary" id="limitNotSet">Add limit</div>
+		<div class="d-none mx-2 col-5 col-sm-7" id="limitSet"><span id="limitText">The limit was set to xxx, there are xxx left to spend. </span><button class="btn btn-link" id="limitSetBtn" type="button"  data-bs-toggle="modal" data-bs-target="#limitModal" style="padding-top: 0px;padding-left: 4px;">Change limit</button></div>
+		<div class="d-none mx-2 col-4 col-md-2 btn btn-outline-dark" id="limitNotSet" type="button" data-bs-toggle="modal" data-bs-target="#limitModal">Add limit</div>
 	</div>
 	<div class="form-group row align-items-end">
 		<div class="col-12 col-md-3 col-sm-6 my-2">
