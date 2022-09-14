@@ -128,8 +128,15 @@ function hideLimitAmount(){
   elLimitNotSet.classList.add("d-none");
 }
 
-const config = {
+const configGET = {
   method: 'GET',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+}
+
+const configPUT = {
+  method: 'PUT',
   headers: {
     'Content-Type': 'application/json'
   },
@@ -139,7 +146,7 @@ async function getArr(date){
   let sDate = await getYYYYMMDDstring(date , type='first');
   let eDate = await getYYYYMMDDstring(date , type='last');
   try{
-    let res = await fetch(origin+`/api/categories/${sDate}and${eDate}`);
+    let res = await fetch(origin+`/api/categories/${sDate}and${eDate}`, configGET);
     return await res.json();
   } catch (e) {
     console.log("ERROR",e);
@@ -155,7 +162,7 @@ async function setLimit(shouldErase=false){
     limit = 'NULL';
   }
   try{
-    let res = await fetch(origin+`/api/change-limit/${name};;;andtype;;;${type};;;andlimit;;;${limit}`);
+    let res = await fetch(origin+`/api/change-limit/${name};;;andtype;;;${type};;;andlimit;;;${limit}`,configPUT);
     return await res.json();
   } catch (e) {
     console.log("ERROR",e);
