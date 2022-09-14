@@ -200,24 +200,29 @@ class MoneyFlowCategory extends \Core\Model{
 	*
 	* @return  array of string
 	*/
-	public static function returnLimitsPeriod($date)	{
-		$sql = 'SELECT		cat.name AS category, flow.type AS type, sum(flow.amount) AS sum, month_limit AS limit
-		FROM		money_flows				AS		flow
-		INNER JOIN	money_flows_categories	AS		cat
-		ON			flow.category_id		=		cat.id
-		INNER JOIN	users_money_flows		AS		user_mf
-		ON			flow.id					=		user_mf.id_money_flows
-		WHERE		id_user					=		:user_id
-		AND			flow.type				=		\'expense\'
-		AND 		date					>=		\'2022-09-01\'
-		AND 		date					<=		\'2022-09-30\'
-		AND			month_limit				IS NOT NULL
-		GROUP BY category';
+	public static function returnLimitsPeriod($sDate , $eDate)	{
+		$sql = 'SELECT name, month_limit AS \'limit\', sum FROM
+						(SELECT id, name, month_limit, type, user_id
+						FROM money_flows_categories
+						WHERE		user_id					=		:user_id
+						AND		type				=		\'expense\'
+						AND month_limit IS NOT NULL ) AS cat
+						LEFT JOIN
+						(SELECT	category_id, sum(flow.amount) AS sum , id_user
+						FROM		money_flows				AS		flow
+						INNER JOIN	users_money_flows		AS		user_mf
+						ON			flow.id					=		user_mf.id_money_flows
+						WHERE		id_user					=		:user_id
+						AND 		date					>=		:sDate
+						AND 		date					<=		:eDate
+						GROUP BY category_id) AS flow
+						ON cat.id = flow.category_id';
 
 		$db = static::getDB();
 		$stmt = $db->prepare($sql);
 		$stmt->bindValue(':user_id', $_SESSION['user_id'] , PDO::PARAM_INT);
-
+		$stmt->bindValue(':sDate', $sDate , PDO::PARAM_STR);
+		$stmt->bindValue(':eDate', $eDate , PDO::PARAM_STR);
 		$stmt->execute();
 
 		return $stmt->fetchAll(PDO::FETCH_CLASS);

@@ -164,8 +164,16 @@ class Category extends Authenticated{
 	 *
 	 * @return void
 	 */
+	// public function listAction(){
+	// 	$categories = MoneyFlowCategory::returnLimits();
+  //   header('Content-Type: application/json', true, 200);
+  //   echo json_encode($categories);
+	// }
 	public function listAction(){
-		$categories = MoneyFlowCategory::returnLimits();
+		$sDate = $this->route_params['sdate'];
+		$eDate = $this->route_params['edate'];
+
+		$categories = MoneyFlowCategory:: returnLimitsPeriod($sDate,$eDate);
     header('Content-Type: application/json', true, 200);
     echo json_encode($categories);
 	}
