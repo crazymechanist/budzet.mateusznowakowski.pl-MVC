@@ -3,24 +3,14 @@
 {% block title %}New {{ type }}{% endblock %}
 
 {% block footer %}
+<script src="/js/date.js"></script>
+
 <script>
-	window.onload = function getTodayDate() {
-		var today = new Date();
-		var dd = today.getDate();
-		var mm = today.getMonth()+1; //January is 0!
-		var yyyy = today.getFullYear();
-		
-		if(dd<10) {
-			dd = '0'+dd
-		} 
-		
-		if(mm<10) {
-			mm = '0'+mm
-		} 
-		
-		today = yyyy + '-' + mm + '-' + dd;
-		
-		{% if moneyFlow.date is  empty %}document.getElementById("inputDate").defaultValue = today;{% endif %}
+	window.onload = function () {
+		{% if moneyFlow.date is  empty %}
+		let today = getTodayDate();
+		document.getElementById("inputDate").defaultValue = today;
+		{% endif %}
 	}
 </script>
 
@@ -31,16 +21,14 @@
 		if (pathname == '/item/new-expense'){
 			$('#menuNewExpense').removeClass('text-dark');
 			$('#menuNewExpense').addClass('text-secondary');
-			}
+		}
 		if (pathname == '/item/new-income'){
 			$('#menuNewIncome').removeClass('text-dark');
 			$('#menuNewIncome').addClass('text-secondary');
-			}
+		}
 	});
 </script>
 
-<script type="text/javascript">
-	</script>
 <script src="/js/moneyFlowValidate.js"></script>
 
 {% endblock %}
@@ -61,60 +49,65 @@
 
 
 <form method="post" action="/item/create" id="formItem">
-	
+
 	<div class="form-group my-2">
 		<label for="inputName">Name</label>
-		<input id="inputName" name="name" placeholder="Name" autofocus required class="form-control" 
+		<input id="inputName" name="name" placeholder="Name" autofocus required class="form-control"
 		{% if moneyFlow.name is not empty %}
 		value= "{{ moneyFlow.name }}"
-		{% else %} 
-		{% if type == 'expense' %} 
-		value="Expense" 
-		{% else %} 
-		value="Income" 
+		{% else %}
+		{% if type == 'expense' %}
+		value="Expense"
+		{% else %}
+		value="Income"
 		{% endif %}
 		{% endif %}/>
 	</div>
-	
+
 	<div>
 		<input type="hidden" id="type" name="type" value="{{ type }}">
 	</div>
 	<div class="form-group my-2">
 		<label for="inputCategory">Category:</label>
-		
-		<select name="category" id="inputCategory" class="form-select">
+
+		<select name="category" id="inputCategory" class="form-select" >
 			{% if moneyFlow.category is not empty %}<option> {{ moneyFlow.category }} </option>{% endif %}
 			{% if categories is empty %}<option> Please add any category </option>{% endif %}
 			{% for category in categories %}
-			{% if category != moneyFlow.category %}
-			<option>{{ category }}</option>
+			{% if category.name != moneyFlow.category %}
+			<option>{{ category.name }}</option>
 			{% endif %}
 			{% endfor %}
 		</select>
 	</div>
-	<div class="form-group col-3">
-		<label for="inputAmount">Amount [PLN]:</label>
-		<input id="inputAmount" name="amount" type="number"
-		{% if moneyFlow.amount is not empty %}
-		value= "{{ moneyFlow.amount }}"
-		{% else %} 
-		value="0.0"
-		{% endif %}
-		step="0.01" min="0" class="form-control" />
+	<div class="form-group row align-items-end">
+		<div class="col-sm-3 col-6">
+			<label for="inputAmount">Amount [PLN]:</label>
+			<input id="inputAmount" name="amount" type="number"
+			{% if moneyFlow.amount is not empty %}
+			value= "{{ moneyFlow.amount }}"
+			{% else %}
+			value="0.0"
+			{% endif %}
+			step="0.01" min="0" class="form-control" />
+		</div>
+		<div class="d-none mx-2 col-5 col-sm-7" id="limitSet"><span id="limitText">The limit was set to xxx, there are xxx left to spend. </span><button class="btn btn-link" type="button" style="padding-top: 0px;padding-left: 4px;">Change limit</button></div>
+		<div class="d-none mx-2 col-4 col-md-2 btn btn-outline-secondary" id="limitNotSet">Add limit</div>
 	</div>
-	<div class="form-group col-3 my-2">
-		<label for="inputDate">Date:</label>
-		<input type="date"  id="inputDate" name="date" value="{{ moneyFlow.date }}" class="form-control" />
-		
+	<div class="form-group row align-items-end">
+		<div class="col-12 col-md-3 col-sm-6 my-2">
+			<label for="inputDate">Date:</label>
+			<input type="date"  id="inputDate" name="date" value="{{ moneyFlow.date }}" class="form-control" />
+		</div>
 	</div>
 	<div class="form-group my-2">
 		<label for="name">Description:</label>
 		<input type="text" id="inputDescription" name="description" value="{{ moneyFlow.description }}" maxlength="280" class="form-control">
 	</div>
-	
-	<button type="submit" class="btn btn-outline-dark my-2 col-3">Create</button>
-	<a class="col-3 btn btn-dark" href="\item\show" >Cancel</a>
-	
+
+	<button id="createButton" type="submit" class="btn btn-outline-dark my-2 col-3">Create</button>
+	<a class="col-3 btn btn-dark" href="/item/show?page=1&sort=date-desc" >Cancel</a>
+
 </form>
 
 {% endblock %}

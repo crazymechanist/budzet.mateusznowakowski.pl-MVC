@@ -13,9 +13,9 @@ use \App\Controllers\Authenticated;
  *
  * PHP version 7.0
  */
- 
+
 class Category extends Authenticated{
-	
+
 	/**
 	 * Exclude function from required authentication
 	 *
@@ -32,7 +32,7 @@ class Category extends Authenticated{
 			throw new \Exception("Method $method not found in controller " . get_class($this));
 		}
 	}
-	
+
 	/**
 	 * Validate if email is available (AJAX) for a new signup.
 	 *
@@ -43,11 +43,11 @@ class Category extends Authenticated{
 		if(MoneyFlowCategory::findIdByName($_GET['category'] ?? null)){
 			$is_valid = true;
 		}
-		
+
 		header('Content-Type: application/json');
 		echo json_encode($is_valid);
 	}
-	
+
 	/**
 	 * Show, edit and delete expense categories
 	 *
@@ -62,7 +62,7 @@ class Category extends Authenticated{
 			'categories' => $categories
 		]);
 	}
-	
+
 	/**
 	 * Show income categories
 	 *
@@ -77,7 +77,7 @@ class Category extends Authenticated{
 			'categories' => $categories
 		]);
 	}
-	
+
 	/**
 	 * New category
 	 *
@@ -108,7 +108,7 @@ class Category extends Authenticated{
 			'id'	=>	$id
 		]);
 	}
-	
+
 	/**
 	 * Update category
 	 *
@@ -127,7 +127,7 @@ class Category extends Authenticated{
 		]);
 		}
 	}
-	
+
 	/**
 	 * Confirm delete money flow
 	 *
@@ -143,7 +143,7 @@ class Category extends Authenticated{
 			'id'	=>	$id
 		]);
 	}
-	
+
 	/**
 	 * Delete money flow
 	 *
@@ -158,4 +158,24 @@ class Category extends Authenticated{
 		}
 		$this->redirect('/Category/show-'.$category->type);
 	}
+
+  /**
+	 * Write out categories
+	 *
+	 * @return void
+	 */
+	// public function listAction(){
+	// 	$categories = MoneyFlowCategory::returnLimits();
+  //   header('Content-Type: application/json', true, 200);
+  //   echo json_encode($categories);
+	// }
+	public function listAction(){
+		$sDate = $this->route_params['sdate'];
+		$eDate = $this->route_params['edate'];
+
+		$categories = MoneyFlowCategory:: returnLimitsPeriod($sDate,$eDate);
+    header('Content-Type: application/json', true, 200);
+    echo json_encode($categories);
+	}
+
 }
