@@ -201,30 +201,58 @@ class MoneyFlowCategory extends \Core\Model{
 	* @return  array of string
 	*/
 	public static function returnLimitsPeriod($sDate , $eDate)	{
-		$sql = 'SELECT name, month_limit AS \'limit\', sum FROM
-						(SELECT id, name, month_limit, type, user_id
-						FROM money_flows_categories
-						WHERE		user_id					=		:user_id
-						AND		type				=		\'expense\'
-						AND month_limit IS NOT NULL ) AS cat
-						LEFT JOIN
-						(SELECT	category_id, sum(flow.amount) AS sum , id_user
-						FROM		money_flows				AS		flow
-						INNER JOIN	users_money_flows		AS		user_mf
-						ON			flow.id					=		user_mf.id_money_flows
-						WHERE		id_user					=		:user_id
-						AND 		date					>=		:sDate
-						AND 		date					<=		:eDate
-						GROUP BY category_id) AS flow
-						ON cat.id = flow.category_id';
+		$sql = 'SELECT name, month_limit AS "limit", sum FROM
+		(SELECT id, name, month_limit, type, user_id
+			FROM money_flows_categories
+			WHERE		user_id					=		:user_id
+			AND		type				=		"expense"
+			AND month_limit IS NOT NULL ) AS cat
+			LEFT JOIN
+			(SELECT	category_id, sum(flow.amount) AS sum , id_user
+			FROM		money_flows				AS		flow
+			INNER JOIN	users_money_flows		AS		user_mf
+			ON			flow.id					=		user_mf.id_money_flows
+			WHERE		id_user					=		:user_id
+			AND 		date					>=		:sDate
+			AND 		date					<=		:eDate
+			GROUP BY category_id) AS flow
+			ON cat.id = flow.category_id';
 
-		$db = static::getDB();
-		$stmt = $db->prepare($sql);
-		$stmt->bindValue(':user_id', $_SESSION['user_id'] , PDO::PARAM_INT);
-		$stmt->bindValue(':sDate', $sDate , PDO::PARAM_STR);
-		$stmt->bindValue(':eDate', $eDate , PDO::PARAM_STR);
-		$stmt->execute();
+			$db = static::getDB();
+			$stmt = $db->prepare($sql);
+			$stmt->bindValue(':user_id', $_SESSION['user_id'] , PDO::PARAM_INT);
+			$stmt->bindValue(':sDate', $sDate , PDO::PARAM_STR);
+			$stmt->bindValue(':eDate', $eDate , PDO::PARAM_STR);
+			$stmt->execute();
 
-		return $stmt->fetchAll(PDO::FETCH_CLASS);
+			return $stmt->fetchAll(PDO::FETCH_CLASS);
+		}
+
+		/**
+		* Returning names of money flows categories and limits in period
+		*
+		* @return  array of string
+		*/
+		public static function addLimit($name , $type , $limit)	{
+			$sql = 'UPDATE money_flows_categories';
+			if ( $limit != 'NULL'){
+				$sql .= "\nSET month_limit = :limit";
+			}else{
+				$sql .= "\nSET month_limit =NULL";
+			}
+				$sql .= "\nWHERE money_flows_categories.type = :type
+			AND money_flows_categories.name = :name
+			AND money_flows_categories.user_id = :user_id";
+
+			$db = static::getDB();
+			$stmt = $db->prepare($sql);
+			if ( $limit != 'NULL'){
+				$stmt->bindValue(':limit', $limit);
+			}
+			$stmt->bindValue(':user_id', $_SESSION['user_id'] , PDO::PARAM_INT);
+			$stmt->bindValue(':type', $type , PDO::PARAM_STR);
+			$stmt->bindValue(':name', $name , PDO::PARAM_STR);
+
+			return $stmt->execute();
+		}
 	}
-}
