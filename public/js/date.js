@@ -61,6 +61,7 @@ inputLimit.onchange = function() {
 }
 
 limitSave.onclick  = async function(){
+  clearAlert();
   let result = await setLimit();
   let date = switchDate.value;
   await assing(date);
@@ -69,6 +70,7 @@ limitSave.onclick  = async function(){
 }
 
 limitErase.onclick  = async function(){
+  clearAlert();
   let result = await setLimit(true);
   let date = switchDate.value;
   await assing(date);
@@ -77,11 +79,15 @@ limitErase.onclick  = async function(){
 }
 
 $('#limitModal').on('hide.bs.modal', function () {
+  clearAlert();
+})
+
+function clearAlert(){
   limitAlert.classList.remove("d-block");
   limitAlert.classList.add("d-none");
   limitAlert.classList.remove("alert-success");
   limitAlert.classList.remove("alert-danger");
-})
+}
 
 function getYYYYMMDDstring(d , type='') {
   let date = new Date(d);
@@ -122,8 +128,15 @@ function hideLimitAmount(){
   elLimitNotSet.classList.add("d-none");
 }
 
-const config = {
+const configGET = {
   method: 'GET',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+}
+
+const configPUT = {
+  method: 'PUT',
   headers: {
     'Content-Type': 'application/json'
   },
@@ -133,84 +146,80 @@ async function getArr(date){
   let sDate = await getYYYYMMDDstring(date , type='first');
   let eDate = await getYYYYMMDDstring(date , type='last');
   try{
-    let res = await fetch(origin+`/api/categories/${sDate}and${eDate}`);
-      return await res.json();
-    } catch (e) {
-      console.log("ERROR",e);
-      error = e;
+    let res = await fetch(origin+`/api/categories/${sDate}and${eDate}`, configGET);
+    return await res.json();
+  } catch (e) {
+    console.log("ERROR",e);
+    error = e;
+  }
+}
+
+async function setLimit(shouldErase=false){
+  let name = await switchCategory.value;
+  let type = await hideInput.value;
+  let limit = await inputLimit.value;
+  if (shouldErase){
+    limit = 'NULL';
+  }
+  try{
+    let res = await fetch(origin+`/api/change-limit/${name};;;andtype;;;${type};;;andlimit;;;${limit}`,configPUT);
+    return await res.json();
+  } catch (e) {
+    console.log("ERROR",e);
+  }
+}
+
+function assignNames(item, i){
+  arrName[i] = item.name;
+}
+
+async function assing(date){
+  try{
+    arr = await getArr(date);
+    arrName = [];
+    arr.forEach(assignNames);
+  } catch (e) {
+    console.log("ERROR",e);
+    error = e;
+  }
+}
+
+function showLimitDialog(){
+  const type = hideInput.value;
+  let category = switchCategory.value;
+  let index = arrName.indexOf(category);
+  if(type=='expense'){
+    if (index !== -1){
+      leftToSpend = arr[index].limit-arr[index].sum-inputAmount.value;
+      let text = `The limit was set to ${arr[index].limit}`;
+      if(leftToSpend>=0){
+        text += `, there are ${leftToSpend.toFixed(2)} left to spend.`;
+      } else {
+        let debt = -leftToSpend;
+        text += `, there are nothing left to spend. ${debt.toFixed(2)} above limit`;
+        createButton.disabled = true;
+      }
+      document.getElementById("limitText").innerHTML=text;
+      hideLimitAmount();
+    } else {
+      showLimitAmount();
     }
   }
+  if (error != '') {
+    document.getElementById("limitSet").innerHTML="Error occured!";
+    hideLimitAmount();
+  }
+}
 
-  async function setLimit(shouldErase=false){
-    let name = await switchCategory.value;
-    let type = await hideInput.value;
-    let limit = await inputLimit.value;
-    if (shouldErase){
-      limit = 'NULL';
-    }
-    try{
-      let res = await fetch(origin+`/api/change-limit/${name};;;andtype;;;${type};;;andlimit;;;${limit}`);
-        return await res.json();
-      } catch (e) {
-        console.log("ERROR",e);
-      }
-    }
+function showMessage(isSuccess){
+  limitAlert.classList.remove("d-none");
+  limitAlert.classList.add("d-block");
+  if (isSuccess){
+    limitAlert.classList.add("alert-success");
+    limitAlert.innerHTML="Success";
+  } else {
+    limitAlert.classList.add("alert-danger");
+    limitAlert.innerHTML="Error occurs!";
+  }
 
-    function assignNames(item, i){
-      arrName[i] = item.name;
-    }
-
-    async function assing(date){
-      try{
-        arr = await getArr(date);
-        arrName = [];
-        arr.forEach(assignNames);
-      } catch (e) {
-        console.log("ERROR",e);
-        error = e;
-      }
-    }
-
-    function showLimitDialog(){
-      const type = hideInput.value;
-      let category = switchCategory.value;
-      let index = arrName.indexOf(category);
-      if(type.includes('expense')
-      && arrName.length !== 0){
-        if (index !== -1){
-          leftToSpend = arr[index].limit-arr[index].sum-inputAmount.value;
-          let text = `The limit was set to ${arr[index].limit}`;
-          if(leftToSpend>=0){
-            text += `, there are ${leftToSpend.toFixed(2)} left to spend.`;
-          } else {
-            let debt = -leftToSpend;
-            text += `, there are nothing left to spend. ${debt.toFixed(2)} above limit`;
-            createButton.disabled = true;
-          }
-          document.getElementById("limitText").innerHTML=text;
-          hideLimitAmount();
-        } else {
-          showLimitAmount();
-        }
-      }
-      if (error != '') {
-        document.getElementById("limitSet").innerHTML="Error occured!";
-        hideLimitAmount();
-      }
-      if (error =='' && arrName.length === 0) {
-        showLimitAmount();
-      }
-    }
-
-    function showMessage(isSuccess){
-      limitAlert.classList.remove("d-none");
-      limitAlert.classList.add("d-block");
-      if (isSuccess){
-        limitAlert.classList.add("alert-success");
-        limitAlert.innerHTML="Success";
-      } else {
-        limitAlert.classList.add("alert-danger");
-        limitAlert.innerHTML="Error occurs!";
-      }
-
-    }
+}
